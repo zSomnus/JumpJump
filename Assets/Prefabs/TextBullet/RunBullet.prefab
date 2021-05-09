@@ -118,7 +118,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u6DA6"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 164ddf0f18ebefe4f9cb129de4cf781f, type: 2}
   m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
