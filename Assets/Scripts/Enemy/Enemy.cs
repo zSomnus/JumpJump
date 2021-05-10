@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
 
     bool canTakeDamage;
+    SpriteRenderer spriteRenderer;
+    Material material;
 
     public bool CanTakeDamage { get => canTakeDamage; set => canTakeDamage = value; }
     public int Hp { get => hp; set => hp = value; }
@@ -35,6 +37,8 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         playerTransform = D.Get<Player>().transform;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        material = spriteRenderer.material;
 
         OnStart();
     }
@@ -111,6 +115,22 @@ public class Enemy : MonoBehaviour
         return fireAngle;
     }
 
+    public void TakeDamage(int damage)
+    {
+        if(hp > 0)
+        {
+            hp -= damage;
+            Debug.Log(material.name);
+            StartCoroutine(HitFlash());
+        }
+    }
+
+    IEnumerator HitFlash()
+    {
+        material.SetFloat("_FlashAmount", 1);
+        yield return new WaitForSeconds(0.1f);
+        material.SetFloat("_FlashAmount", 0);
+    }
 
     protected virtual void OnDeath()
     {
