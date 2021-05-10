@@ -111,7 +111,6 @@ public class Enemy : MonoBehaviour
         return fireAngle;
     }
 
-    protected virtual void OnPostDeath() { }
 
     protected virtual void OnDeath()
     {
@@ -121,4 +120,5 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnStart() { }
     protected virtual void OnUpdate() { }
+    protected virtual void OnPostDeath() { }
 }
