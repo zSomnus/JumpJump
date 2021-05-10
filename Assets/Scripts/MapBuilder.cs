@@ -50,35 +50,46 @@ public class MapBuilder : MonoBehaviour
     [SerializeField] GameObject playerPrefab;
     GameObject playerObject;
 
+    [Header("Enemy")]
+    [SerializeField] GameObject airEnemy;
+    [SerializeField] Vector2 offset = new Vector2(0.5f, 0.5f);
+    [SerializeField] GameObject groundEnemy;
+
+    int round;
+
     // Start is called before the first frame update
     void Start()
     {
-        int round = 0;
+        round = 0;
         mapArray = new List<TileInfo>();
 
         BuildMap();
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 4; i++)
         {
             round++;
             ImproveMap();
         }
 
         BuildInsideTiles();
-        BuildEdgeTile();
+        BuildTile();
+        SpawnEnemy();
 
         if (playerObject != null)
         {
             Destroy(playerObject);
         }
 
-        foreach (var tile in mapArray)
+        if (D.Get<Player>().gameObject)
         {
-            if (tile.TileType == TileType.Floor)
+            foreach (var tile in mapArray)
             {
-                playerObject = Instantiate(playerPrefab);
-                playerObject.transform.position = tile.Position + new Vector3(0.5f, 0.5f, 0);
-                break;
+                if (tile.TileType == TileType.Floor)
+                {
+                    playerObject = D.Get<Player>().gameObject;
+                    playerObject.transform.position = tile.Position + new Vector3(0.5f, 0.5f, 0);
+                    break;
+                }
             }
         }
     }
@@ -102,7 +113,6 @@ public class MapBuilder : MonoBehaviour
                     break;
                 }
             }
-
         }
     }
 
@@ -123,11 +133,6 @@ public class MapBuilder : MonoBehaviour
 
                 TileInfo currentInfo = new TileInfo(currentPosition, currentType);
                 mapArray.Add(currentInfo);
-
-                if (currentType == TileType.Floor)
-                {
-                    tilemap.SetTile(currentPosition, WallTile);
-                }
             }
         }
     }
@@ -145,7 +150,9 @@ public class MapBuilder : MonoBehaviour
         {
             for (int i = 1; i < range.x + 1; i++)
             {
+                // o x
                 if (mapArray[index + i].TileType == TileType.Floor) { count++; }
+                // x o
                 if (mapArray[index - i].TileType == TileType.Floor) { count++; }
 
                 if (mapArray[index - i * mapSize.x].TileType == TileType.Floor) { count++; }
@@ -179,9 +186,13 @@ public class MapBuilder : MonoBehaviour
                 tile.TileType = (NeighborWallsCount(tile, Vector2Int.one) >= 5) ? TileType.Floor : TileType.Wall;
             }
         }
+    }
 
+    void BuildTile()
+    {
         foreach (var tile in mapArray)
         {
+            //Debug.Log(tile.TileType);
             if (tile.TileType == TileType.Wall)
             {
                 tilemap.SetTile(tile.Position, WallTile);
@@ -192,10 +203,7 @@ public class MapBuilder : MonoBehaviour
                 tilemap.SetTile(tile.Position, null);
             }
         }
-    }
 
-    void BuildEdgeTile()
-    {
         for (int i = 0; i < mapArray.Count - 1; i++)
         {
             TileInfo currentInfo = mapArray[i];
@@ -261,16 +269,45 @@ public class MapBuilder : MonoBehaviour
     {
         System.Random random = new System.Random();
 
-        for (int i = 0; i < mapArray.Count; i += mapSize.x)
+
+        for (int i = 0; i < mapArray.Count; i++)
         {
-            if (NeighborWallsCount(mapArray[i], new Vector2Int(1, 1)) > 0)
+            int temp = random.Next(1, 100);
+            int y = random.Next(3, 5);
+            int x = random.Next(3, 5);
+            if ((mapArray[i].Position.y % y == 1) && mapArray[i].Position.x % x == 1 && mapArray[i].TileType != TileType.Wall && temp < 20)
             {
-                mapArray[i].TileType = TileType.Wall;
-                mapArray[i + 1].TileType = TileType.Wall;
-                mapArray[i + 2].TileType = TileType.Wall;
-                Debug.Log(i);
-                Debug.Log(i + 1);
-                Debug.Log(i + 2);
+                int sizeX = random.Next(1, 5);
+                if (i < mapArray.Count - sizeX)
+                {
+                    for (int j = 0; j < sizeX; j++)
+                    {
+                        mapArray[i + j].TileType = TileType.Wall;
+                    }
+                }
+            }
+        }
+    }
+
+    void SpawnEnemy()
+    {
+        System.Random random = new System.Random();
+        foreach(var tile in mapArray)
+        {
+            if(tile.TileType != TileType.Wall)
+            {
+                bool spawnEnemy = random.Next(1, 100) < 5;
+                if (spawnEnemy)
+                {
+                    if(random.Next(1, 2) == 1)
+                    {
+                        Instantiate(airEnemy).transform.position = new Vector2(tile.Position.x + offset.x, tile.Position.y + offset.y);
+                    }
+                    else
+                    {
+                        Instantiate(groundEnemy).transform.position = new Vector2(tile.Position.x + offset.x, tile.Position.y + offset.y);
+                    }
+                }
             }
         }
     }

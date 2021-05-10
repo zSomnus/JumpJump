@@ -11,6 +11,7 @@ public class Bullet : PoolableObject
     [SerializeField] float activeTime;
     [SerializeField] float activeStart;
     [SerializeField] Vector2 speed;
+    [SerializeField] int damage = 1;
     Vector2 startSpeed;
 
     public override void Reset()
@@ -57,6 +58,11 @@ public class Bullet : PoolableObject
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Return to the Object Pool
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            collision.gameObject.GetComponent<Enemy>().Hp -= damage;
+        }
+
         gameObject.SetActive(false);
     }
 }
