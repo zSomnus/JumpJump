@@ -8,9 +8,10 @@ public class Bullet : PoolableObject
     Rigidbody2D rb;
     Vector2 direction;
 
+    [SerializeField] float scale = 1;
     [SerializeField] float activeTime;
     [SerializeField] float activeStart;
-    [SerializeField] Vector2 speed;
+    [SerializeField] float speed;
     [SerializeField] int damage = 1;
     Vector2 startSpeed;
 
@@ -18,11 +19,14 @@ public class Bullet : PoolableObject
     {
         activeStart = 0;
         startSpeed = Vector2.zero;
+        transform.rotation = Quaternion.identity;
+        transform.localScale = Vector2.one * scale;
+        direction = Vector3.zero;
     }
 
     private void Awake()
     {
-        if(GameObject.FindGameObjectWithTag("Player"))
+        if (GameObject.FindGameObjectWithTag("Player"))
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
             rb = GetComponent<Rigidbody2D>();
@@ -33,12 +37,24 @@ public class Bullet : PoolableObject
     {
         if (playerTransform != null)
         {
-            direction = playerTransform.localScale;
-            startSpeed = new Vector2(speed.x * direction.x, speed.y);
+            if (Input.GetAxis("Vertical") > 0.5f)
+            {
+                direction.y = 1;
+                transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
+            else if (Input.GetAxis("Vertical") < -0.5f)
+            {
+                direction.y = -1;
+                transform.rotation = Quaternion.Euler(0, 0, -90);
+            }
+            else
+            {
+                direction.x = playerTransform.localScale.x;
+                transform.localScale = new Vector3(direction.x * scale, transform.localScale.y * scale, 1);
+            }
 
-            transform.localScale = direction;
+            startSpeed = direction * speed;
             transform.position = playerTransform.position;
-            transform.rotation = playerTransform.rotation;
 
             activeStart = Time.time;
         }
@@ -58,7 +74,7 @@ public class Bullet : PoolableObject
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Return to the Object Pool
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             collision.gameObject.GetComponent<Enemy>().Hp -= damage;
         }
