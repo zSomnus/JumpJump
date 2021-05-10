@@ -20,6 +20,10 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     Rigidbody2D rb;
 
+    [Header("Player Info")]
+    [SerializeField] int hp;
+    int currentHp;
+
     [Header("Move")]
     [SerializeField] float runSpeed;
     DIR movingDirection;
@@ -60,6 +64,7 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         dashCD += dashDuration;
         canShoot = true;
+        currentHp = hp;
     }
 
     // Update is called once per frame
@@ -352,6 +357,24 @@ public class Player : MonoBehaviour
                 canDash = true;
             }
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (currentHp > 0)
+        {
+            currentHp -= damage;
+        }
+    }
+
+    public float HpRatio()
+    {
+        if (hp <= 0)
+        {
+            return 1;
+        }
+
+        return (float)currentHp / hp;
     }
 
     private void OnDrawGizmosSelected()

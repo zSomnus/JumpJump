@@ -9,6 +9,9 @@ public class Enemy : MonoBehaviour
     [Header("Enemy Info")]
     [SerializeField] int hp;
     [SerializeField] int damage;
+    [SerializeField] ParticleSystem deathParticle;
+    [SerializeField] bool isRanged;
+    [SerializeField] bool isMelee;
 
     [Header("Ranged Attack")]
     [SerializeField] float shootingCD;
@@ -31,6 +34,7 @@ public class Enemy : MonoBehaviour
         canShoot = true;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        playerTransform = D.Get<Player>().transform;
 
         OnStart();
     }
@@ -38,12 +42,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerTransform == null && GameObject.FindGameObjectWithTag("Player"))
-        {
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        }
-
-        if (canShoot)
+        if (isRanged && canShoot)
         {
             float dis = (transform.position - playerTransform.position).sqrMagnitude;
             if (dis < rangedDistance)
@@ -86,6 +85,7 @@ public class Enemy : MonoBehaviour
         canShoot = false;
         GameObject bullet = ObjectPool.instance.GetFromPool("RunBullet");
         bullet.transform.position = transform.position;
+        bullet.GetComponent<EnemyBullet>().Damage = damage;
 
         if (playerTransform != null)
         {
@@ -115,6 +115,11 @@ public class Enemy : MonoBehaviour
     protected virtual void OnDeath()
     {
         OnPostDeath();
+        D.Get<CameraEffect>().ShackCamera(5f, 0.1f);
+        GameObject temp = Instantiate(deathParticle.gameObject);
+        temp.transform.position = transform.position;
+        Destroy(temp, 0.5f);
+        animator.SetTrigger("TakeHit");
         Destroy(gameObject);
     }
 
