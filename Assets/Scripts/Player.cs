@@ -84,6 +84,24 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isDashing)
+        {
+            float runInput = Input.GetAxis("Horizontal");
+            if (runInput > 0)
+            {
+                runInput = runSpeed;
+            }
+            else if (runInput < 0)
+            {
+                runInput = -runSpeed;
+            }
+            else
+            {
+                runInput = 0f;
+            }
+            rb.velocity = new Vector2(runInput, rb.velocity.y);
+        }
+
         ShowPlayerShadow();
     }
 
