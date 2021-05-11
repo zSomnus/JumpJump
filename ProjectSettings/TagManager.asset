@@ -48,6 +48,15 @@ TagManager:
   - name: Foreground
     uniqueID: 2009049405
     locked: 0
+  - name: AirEnemy
+    uniqueID: 1612905481
+    locked: 0
   - name: Player
     uniqueID: 49047995
+    locked: 0
+  - name: GroundEnemy
+    uniqueID: 536444959
+    locked: 0
+  - name: PlayerWeapon
+    uniqueID: 2229950369
     locked: 0
