@@ -67,7 +67,7 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if(hp <= 0)
+        if (hp <= 0)
         {
             OnDeath();
         }
@@ -94,10 +94,17 @@ public class Enemy : MonoBehaviour
         if (playerTransform != null)
         {
             bullet.GetComponent<EnemyBullet>().Velocity = ((playerTransform.position - transform.position).normalized * bulletSpeed);
+            bullet.SetActive(true);
+
+            bullet.GetComponent<EnemyBullet>().Velocity = ((playerTransform.position - transform.position).normalized * bulletSpeed);
+            bullet.SetActive(true);
+
+            bullet.GetComponent<EnemyBullet>().Velocity = ((playerTransform.position - transform.position).normalized * bulletSpeed);
+            bullet.SetActive(true);
+
             //bullet.transform.eulerAngles = new Vector3(0, 0, ShootAngle());
         }
 
-        bullet.SetActive(true);
         yield return new WaitForSeconds(shootingCD);
         canShoot = true;
     }
@@ -117,10 +124,11 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if(hp > 0)
+        if (hp > 0)
         {
             hp -= damage;
             Debug.Log(material.name);
+            animator.SetTrigger("TakeHit");
             StartCoroutine(HitFlash());
         }
     }
@@ -135,11 +143,10 @@ public class Enemy : MonoBehaviour
     protected virtual void OnDeath()
     {
         OnPostDeath();
-        D.Get<CameraEffect>().ShackCamera(5f, 0.1f);
+        D.Get<CameraEffect>().ShackCamera(8f, 0.1f);
         GameObject temp = Instantiate(deathParticle.gameObject);
         temp.transform.position = transform.position;
         Destroy(temp, 0.5f);
-        animator.SetTrigger("TakeHit");
         Destroy(gameObject);
     }
 

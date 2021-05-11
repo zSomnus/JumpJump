@@ -364,7 +364,7 @@ public class Player : MonoBehaviour
         if (currentHp > 0)
         {
             currentHp -= damage;
-            D.Get<CameraEffect>().ShackCamera(8f, 0.1f);
+            D.Get<CameraEffect>().ShackCamera(5f, 0.1f);
         }
     }
 
