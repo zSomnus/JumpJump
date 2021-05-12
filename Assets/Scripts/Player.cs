@@ -2,6 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum STATE
+{
+    None,
+    Jumping,
+    WallSliding,
+    Attacking,
+    WallJumping,
+    Grounding,
+    InAir
+};
 public enum DIR
 {
     Center,
@@ -26,7 +36,11 @@ public class Player : MonoBehaviour
 
     [Header("Move")]
     [SerializeField] float runSpeed;
+    [SerializeField] float wallSlideSpeed;
+    bool onRightWall;
+    bool onLeftWall;
     DIR movingDirection;
+    STATE state;
 
     [Header("Jump")]
     [SerializeField] float jumpSpeed;
@@ -37,6 +51,7 @@ public class Player : MonoBehaviour
     [SerializeField] int maxAirJumpCount;
     int airJumpCount;
     [SerializeField] Animator wingAnimator;
+    [SerializeField] Vector2 wallJumpFource;
 
     [Header("Dash")]
     [SerializeField] float dashSpeed;
@@ -49,7 +64,10 @@ public class Player : MonoBehaviour
 
     [Header("Collision")]
     [SerializeField] private Vector2 bottomOffset;
+    [SerializeField] private Vector2 rightOffset;
+    [SerializeField] private Vector2 leftOffset;
     [SerializeField] private Vector2 boxSizeGround;
+    [SerializeField] private Vector2 boxSizeWall;
     [SerializeField] LayerMask layerMask;
 
     [Header("Melee Attack")]
@@ -65,6 +83,7 @@ public class Player : MonoBehaviour
         dashCD += dashDuration;
         canShoot = true;
         currentHp = hp;
+        state = STATE.None;
     }
 
     // Update is called once per frame
@@ -73,13 +92,6 @@ public class Player : MonoBehaviour
         PlayerState();
         movingDirection = GetMovingDirection();
         Dash();
-
-        if (!isDashing)
-        {
-            SimulatePhysics();
-            Run();
-        }
-
         Jump();
         Shoot();
         DoubleJump();
@@ -89,22 +101,10 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isDashing)
+        if (!isDashing && state != STATE.WallJumping)
         {
-            float runInput = Input.GetAxis("Horizontal");
-            if (runInput > 0)
-            {
-                runInput = runSpeed;
-            }
-            else if (runInput < 0)
-            {
-                runInput = -runSpeed;
-            }
-            else
-            {
-                runInput = 0f;
-            }
-            rb.velocity = new Vector2(runInput, rb.velocity.y);
+            Run();
+            SimulatePhysics();
         }
 
         ShowPlayerShadow();
@@ -130,6 +130,7 @@ public class Player : MonoBehaviour
     void Run()
     {
         float runInput = Input.GetAxis("Horizontal");
+
         if (runInput > 0)
         {
             runInput = runSpeed;
@@ -147,7 +148,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if (IsOnGround() && Input.GetButtonDown("Jump"))
+        if (state == STATE.Grounding && Input.GetButtonDown("Jump"))
         {
             rb.velocity = new Vector2(0, jumpSpeed);
         }
@@ -155,12 +156,39 @@ public class Player : MonoBehaviour
 
     void DoubleJump()
     {
-        if (!IsOnGround() && airJumpCount < maxAirJumpCount && Input.GetButtonDown("Jump"))
+        if (state == STATE.InAir && airJumpCount < maxAirJumpCount && Input.GetButtonDown("Jump"))
         {
             wingAnimator.SetTrigger("DoubleJump");
             rb.velocity = new Vector2(0, jumpSpeed);
             airJumpCount++;
         }
+    }
+
+    void WallJump()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            StartCoroutine(WallJumpTimer());
+        }
+    }
+
+    IEnumerator WallJumpTimer()
+    {
+        state = STATE.WallJumping;
+        float x = 0;
+
+        if (onLeftWall)
+        {
+            x = wallJumpFource.x;
+        }
+        else if (onRightWall)
+        {
+            x = -wallJumpFource.x;
+        }
+
+        rb.velocity = new Vector2(x, wallJumpFource.y);
+        yield return new WaitForSeconds(0.2f);
+        state = STATE.InAir;
     }
 
     void Attack()
@@ -173,7 +201,7 @@ public class Player : MonoBehaviour
 
     void Dash()
     {
-        if (!isDashing && !isDashCD && canDash && (Input.GetButtonDown("Dash") || Input.GetAxisRaw("Dash") > 0.2f))
+        if (state != STATE.WallSliding && !isDashing && !isDashCD && canDash && (Input.GetButtonDown("Dash") || Input.GetAxisRaw("Dash") > 0.2f))
         {
             Vector2 velocity = Vector2.zero;
 
@@ -240,7 +268,6 @@ public class Player : MonoBehaviour
             GameObject bullet = ObjectPool.instance.GetFromPool("Bullet");
             bullet.SetActive(true);
         }
-
     }
 
     IEnumerator ShootCooldownCount()
@@ -346,17 +373,57 @@ public class Player : MonoBehaviour
         return Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, boxSizeGround, 0f, layerMask);
     }
 
+    bool IsOnWall()
+    {
+        onRightWall = Physics2D.OverlapBox((Vector2)transform.position + rightOffset, boxSizeWall, 0f, layerMask);
+        onLeftWall = Physics2D.OverlapBox((Vector2)transform.position + leftOffset, boxSizeWall, 0f, layerMask);
+
+        return onRightWall || onLeftWall;
+    }
+
+    void OnWallSlide(float slideSpeed)
+    {
+        if (state != STATE.WallJumping)
+        {
+            rb.velocity = new Vector2(0, -slideSpeed);
+            airJumpCount = 0;
+        }
+    }
+
     void PlayerState()
     {
         if (IsOnGround())
         {
             airJumpCount = 0;
+            state = STATE.Grounding;
+        }
+        else if (IsOnWall() &&
+                ((onRightWall && Input.GetAxis("Horizontal") > 0.2f) ||
+                (onLeftWall && Input.GetAxis("Horizontal") < -0.2f)))
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                WallJump();
+            }
+            else if (state != STATE.WallJumping)
+            {
+                OnWallSlide(wallSlideSpeed);
+                state = STATE.WallSliding;
+            }
+        }
+        else if (state != STATE.WallJumping)
+        {
+            state = STATE.InAir;
+        }
 
+        if (state == STATE.Grounding || state == STATE.WallSliding)
+        {
             if (Input.GetAxis("Dash") <= 0.1f)
             {
                 canDash = true;
             }
         }
+
     }
 
     public void TakeDamage(int damage)
@@ -383,5 +450,7 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.red;
         Vector3 center = transform.position;
         Gizmos.DrawWireCube(new Vector3(center.x + bottomOffset.x, center.y + bottomOffset.y, center.z), boxSizeGround);
+        Gizmos.DrawWireCube(new Vector3(center.x + rightOffset.x, center.y + rightOffset.y, center.z), boxSizeWall);
+        Gizmos.DrawWireCube(new Vector3(center.x + leftOffset.x, center.y + leftOffset.y, center.z), boxSizeWall);
     }
 }

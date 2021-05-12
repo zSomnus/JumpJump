@@ -81,7 +81,7 @@ public class Enemy : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(center, facingDirection, attackRange, LayerMask.GetMask("Default"));
 
-        if (hit.collider.tag == "Player")
+        if (hit.collider != null && hit.collider.tag == "Player")
         {
             player.TakeDamage(damage);
         }
@@ -122,7 +122,7 @@ public class Enemy : MonoBehaviour
 
     void FacePlayer()
     {
-        if (playerTransform != null)
+        if (playerTransform != null && canSlash == true)
         {
             if (playerTransform.position.x - transform.position.x > 0)
             {
@@ -176,9 +176,10 @@ public class Enemy : MonoBehaviour
         if (hp > 0)
         {
             hp -= damage;
-            Debug.Log(material.name);
             animator.SetTrigger("TakeHit");
-            StartCoroutine(HitFlash());
+
+            // Material flash to white color
+            //StartCoroutine(HitFlash());
         }
     }
 

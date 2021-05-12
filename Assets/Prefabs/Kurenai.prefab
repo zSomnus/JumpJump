@@ -101,7 +101,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 49047995
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b7e34a3bb92d4114c9b2dbe800df6704, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -184,7 +184,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 49047995
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b7e34a3bb92d4114c9b2dbe800df6704, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -355,7 +355,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 49047995
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 43b1d127387b46940a55ba1d2661667e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -429,19 +429,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 100
   runSpeed: 7
+  wallSlideSpeed: 1
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
-  fallMultiplier: 10
-  lowJumpMultiplier: 100
+  fallMultiplier: 8
+  lowJumpMultiplier: 30
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
+  wallJumpFource: {x: 5, y: 10}
   dashSpeed: 15
   dashDuration: 0.3
   dashCD: 0.2
   shadowCD: 0
   bottomOffset: {x: 0, y: -0.5}
-  boxSizeGround: {x: 0.73, y: 0.2}
+  rightOffset: {x: 0.36, y: 0}
+  leftOffset: {x: -0.36, y: 0}
+  boxSizeGround: {x: 0.65, y: 0.2}
+  boxSizeWall: {x: 0.07, y: 0.15}
   layerMask:
     serializedVersion: 2
     m_Bits: 128
