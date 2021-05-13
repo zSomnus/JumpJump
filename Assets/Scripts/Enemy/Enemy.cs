@@ -66,7 +66,10 @@ public class Enemy : MonoBehaviour
 
         animator.SetFloat("H", Mathf.Abs(rb.velocity.x));
 
-        FacePlayer();
+        if (canSlash)
+        {
+            FacePlayer();
+        }
 
         if (hp <= 0)
         {
