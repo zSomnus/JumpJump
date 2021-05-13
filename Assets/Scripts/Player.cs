@@ -97,6 +97,15 @@ public class Player : MonoBehaviour
         DoubleJump();
         Attack();
         FlipSprite();
+
+        if (state == STATE.Grounding || isDashing)
+        {
+            rb.gravityScale = 0;
+        }
+        else
+        {
+            rb.gravityScale = 1;
+        }
     }
 
     private void FixedUpdate()
@@ -104,7 +113,11 @@ public class Player : MonoBehaviour
         if (!isDashing && state != STATE.WallJumping)
         {
             Run();
-            SimulatePhysics();
+
+            if (state != STATE.Grounding)
+            {
+                SimulatePhysics();
+            }
         }
 
         ShowPlayerShadow();
@@ -120,7 +133,7 @@ public class Player : MonoBehaviour
 
     void FlipSprite()
     {
-        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
+        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 5f;
         if (playerHasHorizontalSpeed)
         {
             transform.localScale = new Vector2(Mathf.Sign(rb.velocity.x), 1f);
@@ -142,6 +155,7 @@ public class Player : MonoBehaviour
         else
         {
             runInput = 0f;
+            Debug.Log(rb.velocity);
         }
         rb.velocity = new Vector2(runInput, rb.velocity.y);
     }
@@ -295,7 +309,6 @@ public class Player : MonoBehaviour
         canDash = false;
         rb.velocity = velocity;
         isDashing = true;
-        rb.gravityScale = 0;
 
         yield return new WaitForSeconds(duration);
 
