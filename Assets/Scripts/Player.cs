@@ -96,7 +96,15 @@ public class Player : MonoBehaviour
         Shoot();
         DoubleJump();
         Attack();
-        FlipSprite();
+
+        if (state == STATE.Grounding)
+        {
+            FlipSpriteByInput();
+        }
+        else
+        {
+            FlipSpriteByVelocity();
+        }
 
         if (state == STATE.Grounding || isDashing)
         {
@@ -131,9 +139,21 @@ public class Player : MonoBehaviour
         }
     }
 
-    void FlipSprite()
+    void FlipSpriteByInput()
     {
-        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 5f;
+        //bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
+        bool playerHasHorizontalSpeed = Input.GetAxis("Horizontal") != 0;
+
+        if (playerHasHorizontalSpeed)
+        {
+            transform.localScale = new Vector2(Mathf.Sign(Input.GetAxis("Horizontal")), 1f);
+        }
+    }
+
+    void FlipSpriteByVelocity()
+    {
+        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
+
         if (playerHasHorizontalSpeed)
         {
             transform.localScale = new Vector2(Mathf.Sign(rb.velocity.x), 1f);
