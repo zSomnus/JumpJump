@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3550063869171902613}
   - component: {fileID: 3550063869171902615}
   - component: {fileID: 8290361162641104572}
+  - component: {fileID: 6871093840547551731}
   m_Layer: 11
   m_Name: FlyingEye
   m_TagString: Untagged
@@ -121,7 +122,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1612905481
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -4795363162621231457, guid: 6d7cd4f7505dc674c891ca8946cfd98b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -165,16 +166,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57946855c22fca45bf8e737ec90b439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 2
   damage: 10
-  deathParticle: {fileID: 4998181849116529819, guid: d3c2bdaba25e02241bc7735ca3aa82b6, type: 3}
   isRanged: 1
   isMelee: 0
-  moveSpeed: 3
   aggroRange: 15
   attackRange: 6
-  centerOffset: {x: 0, y: 0}
   attackCD: 3
   bulletSpeed: 8
+  animator: {fileID: 3550063869171902615}
+--- !u!114 &6871093840547551731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3550063869171902609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f65b44fd0604d141a17ab23cf26475d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHp: 2
+  moveSpeed: 5
+  mainRenderer: {fileID: 0}
+  mainMaterial: {fileID: 0}
   animator: {fileID: 0}
-  rb: {fileID: 0}
+  centerOffset: {x: 0, y: 0}
+  mainCameraEffect: {fileID: 0}

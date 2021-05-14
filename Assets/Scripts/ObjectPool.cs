@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    public static ObjectPool instance;
-
     Dictionary<string, ObjectPoolQueue> pools = new Dictionary<string, ObjectPoolQueue>();
 
     private void Awake()
     {
-        instance = this;
-
         foreach (Transform pool in transform)
         {
             var objectPoolQueue = new ObjectPoolQueue();

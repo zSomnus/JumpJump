@@ -292,6 +292,7 @@ GameObject:
   - component: {fileID: 7006016662046581509}
   - component: {fileID: 7989231351478816477}
   - component: {fileID: 7989231351478816476}
+  - component: {fileID: 1777967725613650817}
   - component: {fileID: 7989231351478816474}
   m_Layer: 0
   m_Name: Kurenai
@@ -415,6 +416,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.65, y: 0.8}
   m_EdgeRadius: 0.05
+--- !u!95 &1777967725613650817
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989231351478816479}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 840a3e60ecde6ae4fadd82aca3ee1fb4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &7989231351478816474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,8 +447,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bc6fd80444c8eb47a4a46dd2380501d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 100
-  runSpeed: 7
+  baseHp: 100
+  moveSpeed: 8
+  mainRenderer: {fileID: 7006016662046581509}
+  mainMaterial: {fileID: 0}
+  animator: {fileID: 0}
+  centerOffset: {x: 0, y: 0}
+  mainCameraEffect: {fileID: 0}
   wallSlideSpeed: 1
   jumpSpeed: 12
   minJumpSpeed: 10
@@ -441,7 +466,7 @@ MonoBehaviour:
   dashSpeed: 15
   dashDuration: 0.3
   dashCD: 0.2
-  shadowCD: 0
+  shadowCD: 0.1
   bottomOffset: {x: 0, y: -0.5}
   rightOffset: {x: 0.36, y: 0}
   leftOffset: {x: -0.36, y: 0}

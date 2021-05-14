@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6841685164739941446}
   - component: {fileID: 6841685164739941450}
   - component: {fileID: 8808015224219533621}
+  - component: {fileID: 2564695524173808809}
   m_Layer: 11
   m_Name: Goblin
   m_TagString: Untagged
@@ -165,16 +166,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57946855c22fca45bf8e737ec90b439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 4
   damage: 20
-  deathParticle: {fileID: 4998181849116529819, guid: d3c2bdaba25e02241bc7735ca3aa82b6, type: 3}
   isRanged: 0
   isMelee: 1
-  moveSpeed: 5
   aggroRange: 10
   attackRange: 1.5
-  centerOffset: {x: 0, y: -0.3}
   attackCD: 1
   bulletSpeed: 0
   animator: {fileID: 0}
-  rb: {fileID: 0}
+--- !u!114 &2564695524173808809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6841685164739941453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8057d644b01723641b3c18d2e8e5c1fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHp: 4
+  moveSpeed: 5
+  mainRenderer: {fileID: 6841685164739941448}
+  mainMaterial: {fileID: 0}
+  animator: {fileID: 6841685164739941450}
+  centerOffset: {x: 0, y: -0.24}
+  mainCameraEffect: {fileID: 0}

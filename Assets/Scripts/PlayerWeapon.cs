@@ -21,7 +21,7 @@ public class PlayerWeapon : MonoBehaviour
 
     IEnumerator Attack(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+        collision.gameObject.GetComponent<Actor>().OnDamage(damage);
         yield return new WaitForSeconds(damageCD);
     }
 

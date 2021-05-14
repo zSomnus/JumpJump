@@ -2,21 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
     Transform playerTransform;
     Player player;
-
+    Actor owner;
+    private ObjectPool objectPool;
     [Header("Enemy Info")]
-    [SerializeField] int hp;
     [SerializeField] int damage;
-    [SerializeField] ParticleSystem deathParticle;
     [SerializeField] bool isRanged;
     [SerializeField] bool isMelee;
-    [SerializeField] float moveSpeed;
     [SerializeField] float aggroRange = 8;
     [SerializeField] float attackRange = 3;
-    [SerializeField] Vector2 centerOffset;
 
     [Header("Attack Info")]
     [SerializeField] float attackCD = 3;
@@ -26,33 +23,19 @@ public class Enemy : MonoBehaviour
 
     [Header("Enemy Component")]
     [SerializeField] Animator animator;
-    [SerializeField] Rigidbody2D rb;
 
-    bool canTakeDamage;
-    SpriteRenderer spriteRenderer;
-    Material material;
     float dis;
+    private Rigidbody2D rb;
 
-    Vector2 center;
-    Vector2 facingDirection;
-
-    public bool CanTakeDamage { get => canTakeDamage; set => canTakeDamage = value; }
-    public int Hp { get => hp; set => hp = value; }
-
-    private void Start()
+    private void Awake()
     {
-        canTakeDamage = true;
         canShoot = true;
         canSlash = true;
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
         player = D.Get<Player>();
         playerTransform = player.transform;
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        material = spriteRenderer.material;
-
-
-        OnStart();
+        rb = GetComponent<Rigidbody2D>();
+        Init(GetComponent<Actor>(), D.Get<ObjectPool>());
+        animator = owner.Animator;
     }
 
     // Update is called once per frame
@@ -61,35 +44,29 @@ public class Enemy : MonoBehaviour
         dis = Vector2.Distance(transform.position, playerTransform.position);
 
         RangedAttack();
-
         MeleeAttack();
-
-        animator.SetFloat("H", Mathf.Abs(rb.velocity.x));
 
         if (canSlash)
         {
             FacePlayer();
         }
-
-        if (hp <= 0)
-        {
-            OnDeath();
-        }
     }
 
     public void ApplyMeleeDamage()
     {
-        center = new Vector2(transform.position.x + centerOffset.x, transform.position.y + centerOffset.y);
-        facingDirection = new Vector2(transform.localScale.x, 0);
-
-        RaycastHit2D hit = Physics2D.Raycast(center, facingDirection, attackRange, LayerMask.GetMask("Default"));
+        RaycastHit2D hit = Physics2D.Raycast(owner.Center, owner.GetFacingDirection(), attackRange, LayerMask.GetMask("Default"));
 
         if (hit.collider != null && hit.collider.tag == "Player")
         {
-            player.TakeDamage(damage);
+            player.OnDamage(damage);
         }
     }
 
+    public void Init(Actor owner, ObjectPool objectPool)
+    {
+        this.owner = owner;
+        this.objectPool = objectPool;
+    }
 
     void MeleeAttack()
     {
@@ -97,7 +74,7 @@ public class Enemy : MonoBehaviour
         {
             if (dis > attackRange)
             {
-                rb.velocity = new Vector2(moveSpeed * transform.localScale.x, rb.velocity.y);
+                rb.velocity = new Vector2(owner.GetMoveSpeed() * transform.localScale.x, rb.velocity.y);
             }
             else
             {
@@ -113,7 +90,7 @@ public class Enemy : MonoBehaviour
         {
             if (dis > attackRange)
             {
-                rb.velocity = ((playerTransform.position - transform.position).normalized * moveSpeed);
+                rb.velocity = ((playerTransform.position - transform.position).normalized * owner.GetMoveSpeed());
             }
             else
             {
@@ -141,7 +118,7 @@ public class Enemy : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
-        GameObject bullet = ObjectPool.instance.GetFromPool("RunBullet");
+        GameObject bullet = objectPool.GetFromPool("RunBullet");
         bullet.transform.position = transform.position;
         bullet.GetComponent<EnemyBullet>().Damage = damage;
 
@@ -174,35 +151,6 @@ public class Enemy : MonoBehaviour
         return fireAngle;
     }
 
-    public void TakeDamage(int damage)
-    {
-        if (hp > 0)
-        {
-            hp -= damage;
-            animator.SetTrigger("TakeHit");
-
-            // Material flash to white color
-            //StartCoroutine(HitFlash());
-        }
-    }
-
-    IEnumerator HitFlash()
-    {
-        material.SetFloat("_FlashAmount", 1);
-        yield return new WaitForSeconds(0.1f);
-        material.SetFloat("_FlashAmount", 0);
-    }
-
-    protected virtual void OnDeath()
-    {
-        OnPostDeath();
-        D.Get<CameraEffect>().ShackCamera(6f, 0.1f);
-        GameObject temp = Instantiate(deathParticle.gameObject);
-        temp.transform.position = transform.position;
-        Destroy(temp, 0.5f);
-        Destroy(gameObject);
-    }
-
     private void OnDrawGizmosSelected()
     {
         // Attack range;
@@ -212,15 +160,5 @@ public class Enemy : MonoBehaviour
         // Aggro range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, aggroRange);
-
-        // Melee Attack ray
-        //Gizmos.color = Color.cyan;
-        //center = new Vector3(transform.position.x + centerOffset.x, transform.position.y + centerOffset.y, 0);
-        //facingDirection = new Vector3(transform.localScale.x, 0, 0);
-        //Gizmos.DrawRay(center, facingDirection * attackRange);
     }
-
-    protected virtual void OnStart() { }
-    protected virtual void OnUpdate() { }
-    protected virtual void OnPostDeath() { }
 }

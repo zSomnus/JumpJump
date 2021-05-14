@@ -15,6 +15,6 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        hpBarFill.transform.localScale = new Vector3(player.HpRatio(), 1, 1);
+        hpBarFill.transform.localScale = new Vector3(player.GetHpRatio(), 1, 1);
     }
 }

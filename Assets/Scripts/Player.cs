@@ -25,17 +25,9 @@ public enum DIR
     DownLeft
 };
 
-public class Player : MonoBehaviour
+public class Player : GroundActor
 {
-    // Start is called before the first frame update
-    Rigidbody2D rb;
-
-    [Header("Player Info")]
-    [SerializeField] int hp;
-    int currentHp;
-
     [Header("Move")]
-    [SerializeField] float runSpeed;
     [SerializeField] float wallSlideSpeed;
     bool onRightWall;
     bool onLeftWall;
@@ -77,18 +69,18 @@ public class Player : MonoBehaviour
     [SerializeField] float rangedCD;
     bool canShoot;
 
-    void Start()
+    protected override void OnStart()
     {
-        rb = GetComponent<Rigidbody2D>();
+        base.OnStart();
         dashCD += dashDuration;
         canShoot = true;
-        currentHp = hp;
         state = STATE.None;
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         PlayerState();
         movingDirection = GetMovingDirection();
         Dash();
@@ -96,15 +88,6 @@ public class Player : MonoBehaviour
         Shoot();
         DoubleJump();
         Attack();
-
-        if (state == STATE.Grounding)
-        {
-            FlipSpriteByInput();
-        }
-        else
-        {
-            FlipSpriteByVelocity();
-        }
 
         if (state == STATE.Grounding || isDashing)
         {
@@ -139,24 +122,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    void FlipSpriteByInput()
+    protected override void FlipSprite()
     {
-        //bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
-        bool playerHasHorizontalSpeed = Input.GetAxis("Horizontal") != 0;
-
-        if (playerHasHorizontalSpeed)
+        if (state == STATE.Grounding)
         {
-            transform.localScale = new Vector2(Mathf.Sign(Input.GetAxis("Horizontal")), 1f);
+            bool playerHasHorizontalSpeed = Input.GetAxis("Horizontal") != 0;
+
+            if (playerHasHorizontalSpeed)
+            {
+                transform.localScale = new Vector2(Mathf.Sign(Input.GetAxis("Horizontal")), 1f);
+            }
         }
-    }
-
-    void FlipSpriteByVelocity()
-    {
-        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
-
-        if (playerHasHorizontalSpeed)
+        else
         {
-            transform.localScale = new Vector2(Mathf.Sign(rb.velocity.x), 1f);
+            base.FlipSprite();
         }
     }
 
@@ -166,16 +145,15 @@ public class Player : MonoBehaviour
 
         if (runInput > 0)
         {
-            runInput = runSpeed;
+            runInput = GetMoveSpeed();
         }
         else if (runInput < 0)
         {
-            runInput = -runSpeed;
+            runInput = -GetMoveSpeed();
         }
         else
         {
             runInput = 0f;
-            Debug.Log(rb.velocity);
         }
         rb.velocity = new Vector2(runInput, rb.velocity.y);
     }
@@ -299,7 +277,7 @@ public class Player : MonoBehaviour
         if (Input.GetButton("Fire2") && canShoot)
         {
             StartCoroutine(ShootCooldownCount());
-            GameObject bullet = ObjectPool.instance.GetFromPool("Bullet");
+            GameObject bullet = objectPool.GetFromPool("Bullet");
             bullet.SetActive(true);
         }
     }
@@ -314,7 +292,7 @@ public class Player : MonoBehaviour
     IEnumerator GetShadow()
     {
         yield return new WaitForSeconds(shadowCD);
-        ObjectPool.instance.GetFromPool("PlayerShadow").SetActive(true);
+        objectPool.GetFromPool("PlayerShadow").SetActive(true);
     }
 
     IEnumerator DashCooldown(float cd)
@@ -459,23 +437,10 @@ public class Player : MonoBehaviour
 
     }
 
-    public void TakeDamage(int damage)
+    public override int OnDamage(int damage)
     {
-        if (currentHp > 0)
-        {
-            currentHp -= damage;
-            D.Get<CameraEffect>().ShackCamera(5f, 0.1f);
-        }
-    }
-
-    public float HpRatio()
-    {
-        if (hp <= 0)
-        {
-            return 1;
-        }
-
-        return (float)currentHp / hp;
+        GetCameraEffect().ShackCamera(5f, 0.1f);
+        return base.OnDamage(damage);
     }
 
     private void OnDrawGizmosSelected()

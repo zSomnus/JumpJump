@@ -45,7 +45,7 @@ public class EnemyBullet : PoolableObject
         // Return to the Object Pool
         if (collision.gameObject.tag == "Player")
         {
-            D.Get<Player>().TakeDamage(damage);
+            D.Get<Player>().OnDamage(damage);
         }
 
     }

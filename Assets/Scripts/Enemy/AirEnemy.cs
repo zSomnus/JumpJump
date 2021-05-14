@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AirEnemy : Enemy
+public class AirEnemy : AirActor
 {
-    protected override void OnStart()
+    public override int OnDamage(int damage)
     {
-        base.OnStart();
+        Animator.SetTrigger("TakeHit");
+
+        return base.OnDamage(damage);
     }
 
-    protected override void OnUpdate()
-    {
-        base.OnUpdate();
-    }
 
-    protected override void OnPostDeath()
+    public override void OnDeath()
     {
-        base.OnPostDeath();
+        GetCameraEffect().ShackCamera(6f, 0.1f);
+        GameObject temp = objectPool.GetFromPool("DeathParticle");
+        temp.transform.position = transform.position;
+        temp.SetActive(true);
+        base.OnDeath();
     }
 }

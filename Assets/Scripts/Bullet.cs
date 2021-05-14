@@ -76,7 +76,7 @@ public class Bullet : PoolableObject
         // Return to the Object Pool
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            collision.gameObject.GetComponent<Actor>().OnDamage(damage);
         }
 
         gameObject.SetActive(false);

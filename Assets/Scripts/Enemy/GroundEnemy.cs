@@ -2,15 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroundEnemy : Enemy
+public class GroundEnemy : GroundActor
 {
-    protected override void OnStart()
+    protected override void Update()
     {
-        base.OnStart();
+        base.Update();
+        Animator.SetFloat("H", Mathf.Abs(rb.velocity.x));
     }
 
-    protected override void OnUpdate()
+    public override void OnDeath()
     {
-        base.OnUpdate();
+        GetCameraEffect().ShackCamera(6f, 0.1f);
+        GameObject temp = objectPool.GetFromPool("DeathParticle");
+        temp.transform.position = transform.position;
+        temp.SetActive(true);
+        base.OnDeath();
     }
 }
