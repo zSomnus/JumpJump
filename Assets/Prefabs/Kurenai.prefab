@@ -449,17 +449,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 100
   moveSpeed: 8
+  isFacingMoveDirection: 1
   mainRenderer: {fileID: 7006016662046581509}
   mainMaterial: {fileID: 0}
   animator: {fileID: 0}
   centerOffset: {x: 0, y: 0}
   mainCameraEffect: {fileID: 0}
-  wallSlideSpeed: 1
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
   fallMultiplier: 8
   lowJumpMultiplier: 30
+  wallSlideSpeed: 1
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
   wallJumpFource: {x: 5, y: 10}

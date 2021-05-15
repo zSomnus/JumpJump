@@ -169,6 +169,7 @@ MonoBehaviour:
   damage: 20
   isRanged: 0
   isMelee: 1
+  centerOffset: {x: 0, y: -0.24, z: 0}
   aggroRange: 10
   attackRange: 1.5
   attackCD: 1
@@ -188,8 +189,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 4
   moveSpeed: 5
+  isFacingMoveDirection: 1
   mainRenderer: {fileID: 6841685164739941448}
   mainMaterial: {fileID: 0}
   animator: {fileID: 6841685164739941450}
   centerOffset: {x: 0, y: -0.24}
   mainCameraEffect: {fileID: 0}
+  jumpSpeed: 12
+  minJumpSpeed: 10
+  maxFallSpeed: 15
+  fallMultiplier: 8
+  lowJumpMultiplier: 30

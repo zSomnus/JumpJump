@@ -35,11 +35,6 @@ public class Player : GroundActor
     STATE state;
 
     [Header("Jump")]
-    [SerializeField] float jumpSpeed;
-    [SerializeField] float minJumpSpeed;
-    [SerializeField] float maxFallSpeed;
-    [SerializeField] float fallMultiplier;
-    [SerializeField] float lowJumpMultiplier;
     [SerializeField] int maxAirJumpCount;
     int airJumpCount;
     [SerializeField] Animator wingAnimator;
@@ -80,7 +75,6 @@ public class Player : GroundActor
     // Update is called once per frame
     protected override void Update()
     {
-        base.Update();
         PlayerState();
         movingDirection = GetMovingDirection();
         Dash();
@@ -97,18 +91,16 @@ public class Player : GroundActor
         {
             rb.gravityScale = 1;
         }
+
+        base.Update();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (!isDashing && state != STATE.WallJumping)
         {
             Run();
-
-            if (state != STATE.Grounding)
-            {
-                SimulatePhysics();
-            }
         }
 
         ShowPlayerShadow();
@@ -315,18 +307,21 @@ public class Player : GroundActor
         rb.gravityScale = 1;
     }
 
-    void SimulatePhysics()
+    protected override void SimulatePhysics()
     {
-        // simulate physics
-        if (rb.velocity.y < minJumpSpeed && rb.velocity.y > -maxFallSpeed)
+        if (!isDashing && (state != STATE.WallJumping) && (state != STATE.Grounding))
         {
+            // simulate physics
+            if (rb.velocity.y < minJumpSpeed && rb.velocity.y > -maxFallSpeed)
+            {
 
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+                rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
 
-        }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
-        {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+            }
+            else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
+            {
+                rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+            }
         }
     }
 

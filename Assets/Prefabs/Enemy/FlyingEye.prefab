@@ -44,7 +44,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3550063869171902609}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -169,6 +169,7 @@ MonoBehaviour:
   damage: 10
   isRanged: 1
   isMelee: 0
+  centerOffset: {x: 0, y: 0, z: 0}
   aggroRange: 15
   attackRange: 6
   attackCD: 3
@@ -188,6 +189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 2
   moveSpeed: 5
+  isFacingMoveDirection: 0
   mainRenderer: {fileID: 0}
   mainMaterial: {fileID: 0}
   animator: {fileID: 0}

@@ -10,6 +10,11 @@ public class GroundEnemy : GroundActor
         Animator.SetFloat("H", Mathf.Abs(rb.velocity.x));
     }
 
+    protected override void FlipSprite()
+    {
+        //base.FlipSprite();
+    }
+
     public override void OnDeath()
     {
         GetCameraEffect().ShackCamera(6f, 0.1f);

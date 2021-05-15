@@ -7,11 +7,13 @@ public class EnemyController : MonoBehaviour
     Transform playerTransform;
     Player player;
     Actor owner;
+    Vector3 center;
     private ObjectPool objectPool;
     [Header("Enemy Info")]
     [SerializeField] int damage;
     [SerializeField] bool isRanged;
     [SerializeField] bool isMelee;
+    [SerializeField] Vector3 centerOffset;
     [SerializeField] float aggroRange = 8;
     [SerializeField] float attackRange = 3;
 
@@ -27,6 +29,11 @@ public class EnemyController : MonoBehaviour
     float dis;
     private Rigidbody2D rb;
 
+    private void OnValidate()
+    {
+        center = transform.position + centerOffset;
+    }
+
     private void Awake()
     {
         canShoot = true;
@@ -41,20 +48,34 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        dis = Vector2.Distance(transform.position, playerTransform.position);
+        if (player == null)
+        {
+            return;
+        }
+
 
         RangedAttack();
         MeleeAttack();
 
-        if (canSlash)
+        if (canSlash && owner.isFacingMoveDirection == false)
         {
             FacePlayer();
         }
     }
 
+    private void FixedUpdate()
+    {
+        center = transform.position + centerOffset;
+
+        if (player != null)
+        {
+            dis = Vector2.Distance(center, playerTransform.position);
+        }
+    }
+
     public void ApplyMeleeDamage()
     {
-        RaycastHit2D hit = Physics2D.Raycast(owner.Center, owner.GetFacingDirection(), attackRange, LayerMask.GetMask("Default"));
+        RaycastHit2D hit = Physics2D.Raycast(center, owner.GetFacingDirection(), attackRange, LayerMask.GetMask("Default"));
 
         if (hit.collider != null && hit.collider.tag == "Player")
         {
@@ -74,10 +95,12 @@ public class EnemyController : MonoBehaviour
         {
             if (dis > attackRange)
             {
+                owner.isFacingMoveDirection = false;
                 rb.velocity = new Vector2(owner.GetMoveSpeed() * transform.localScale.x, rb.velocity.y);
             }
             else
             {
+                owner.isFacingMoveDirection = true;
                 rb.velocity = Vector2.zero;
                 StartCoroutine(Slash());
             }
@@ -155,10 +178,10 @@ public class EnemyController : MonoBehaviour
     {
         // Attack range;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(center, attackRange);
 
         // Aggro range
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aggroRange);
+        Gizmos.DrawWireSphere(center, aggroRange);
     }
 }

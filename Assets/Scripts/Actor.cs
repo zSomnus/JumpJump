@@ -12,22 +12,17 @@ public class Actor : MonoBehaviour
     [SerializeField] int baseHp;
     int currentHp;
     [SerializeField] float moveSpeed;
+    public bool isFacingMoveDirection = true;
     [SerializeField] protected SpriteRenderer mainRenderer;
     [SerializeField] protected Material mainMaterial;
     [SerializeField] private Animator animator;
     [SerializeField] Vector2 centerOffset;
-    Vector2 center;
     [SerializeField] CameraEffect mainCameraEffect;
 
-    public Vector2 Center { get => center; set => center = value; }
     public Animator Animator { get => animator; set => animator = value; }
+    public Vector2 CenterOffset { get => centerOffset; set => centerOffset = value; }
 
     public event Action<Actor> OnPostDeath = delegate { };
-
-    protected virtual void OnValidate()
-    {
-        center = new Vector2(transform.position.x + centerOffset.x, transform.position.y + centerOffset.y);
-    }
 
     private void Awake()
     {
@@ -49,16 +44,24 @@ public class Actor : MonoBehaviour
 
     protected virtual void Update()
     {
+
+    }
+
+    protected virtual void FixedUpdate()
+    {
         FlipSprite();
     }
 
     protected virtual void FlipSprite()
     {
-        bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
-
-        if (playerHasHorizontalSpeed)
+        if (isFacingMoveDirection)
         {
-            transform.localScale = new Vector2(Mathf.Sign(rb.velocity.x), 1f);
+            bool playerHasHorizontalSpeed = Mathf.Abs(rb.velocity.x) > Mathf.Epsilon + 0.5f;
+
+            if (playerHasHorizontalSpeed)
+            {
+                transform.localScale = new Vector2(Mathf.Sign(rb.velocity.x), 1f);
+            }
         }
     }
 
@@ -84,7 +87,16 @@ public class Actor : MonoBehaviour
 
     public float GetHpRatio()
     {
-        return (float)currentHp / GetBaseHp();
+        float ratio = (float)currentHp / GetBaseHp();
+
+        if (ratio > 0)
+        {
+            return ratio;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     public virtual void OnHeal(int heal)
@@ -138,10 +150,4 @@ public class Actor : MonoBehaviour
 
     protected virtual void OnAwake() { }
     protected virtual void OnStart() { }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(center, 0.1f);
-    }
 }
