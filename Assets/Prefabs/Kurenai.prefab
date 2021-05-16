@@ -456,6 +456,8 @@ MonoBehaviour:
   centerOffset: {x: 0, y: 0}
   mainCameraEffect: {fileID: 0}
   canTakeSpikeDamage: 1
+  hitAudio: {fileID: 8300000, guid: f191849f3d740014f892b380ebf5557c, type: 3}
+  deathAudio: {fileID: 8300000, guid: 40ff7ba5e4fb2c0458b18704819fa71e, type: 3}
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
@@ -466,11 +468,12 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 128
+  landingAudio: {fileID: 0}
   animationObjects:
   - {fileID: 2826981605148613424}
   - {fileID: 5775145564912565087}
   - {fileID: 8516021757888469603}
-  wallSlideSpeed: 1
+  wallSlideSpeed: 2
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
   wallJumpFource: {x: 5, y: 7}

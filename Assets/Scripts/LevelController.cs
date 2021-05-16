@@ -43,7 +43,6 @@ public class LevelController : MonoBehaviour
 
         if (player != null)
         {
-            Debug.Log("Reset");
             playerObject.transform.position = playerStartPosition;
             playerObject.SetActive(true);
             reseting = false;

@@ -20,6 +20,8 @@ public class Actor : MonoBehaviour
     [SerializeField] Vector2 centerOffset;
     [SerializeField] CameraEffect mainCameraEffect;
     [SerializeField] protected bool canTakeSpikeDamage = true;
+    [SerializeField] AudioClip hitAudio;
+    [SerializeField] AudioClip deathAudio;
 
     public Animator Animator { get => animator; set => animator = value; }
     public Vector2 CenterOffset { get => centerOffset; set => centerOffset = value; }
@@ -48,6 +50,7 @@ public class Actor : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHp = baseHp;
         baseCollider = GetComponent<Collider2D>();
+        mainMaterial.SetFloat("_FlashAmount", 0);
     }
 
     private void Start()
@@ -120,6 +123,11 @@ public class Actor : MonoBehaviour
 
     public virtual int OnDamage(int damage)
     {
+        // Prepare and play hit audio
+        GameObject hitAudioObj = objectPool.GetFromPool("AudioSource");
+        hitAudioObj.GetComponent<AudioPlayer>().SetAudioClip(hitAudio);
+        hitAudioObj.SetActive(true);
+
         StartCoroutine(HitFlash());
         currentHp -= OnPreDamageApplication(damage);
 
@@ -145,6 +153,11 @@ public class Actor : MonoBehaviour
 
     public virtual void OnDeath()
     {
+        // Prepare and play death audio
+        GameObject deathAudioObj = objectPool.GetFromPool("AudioSource");
+        deathAudioObj.GetComponent<AudioPlayer>().SetAudioClip(deathAudio);
+        deathAudioObj.SetActive(true);
+
         OnPostDeath(this);
         GameObject temp = objectPool.GetFromPool("DeathParticle");
         temp.transform.position = transform.position;

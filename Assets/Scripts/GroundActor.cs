@@ -12,6 +12,7 @@ public class GroundActor : Actor
     [SerializeField] protected Vector2 bottomOffset;
     [SerializeField] protected Vector2 boxSizeGround;
     [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] AudioClip landingAudio;
 
     protected override void Update()
     {
