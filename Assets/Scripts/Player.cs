@@ -210,12 +210,12 @@ public class Player : GroundActor
             {
                 case DIR.Up:
                     //rb.velocity = Vector2.up * dashSpeed;
-                    velocity = Vector2.up * dashSpeed;
+                    velocity = Vector2.up * dashSpeed * 0.7f;
                     //Dash(Vector2.up * dashSpeed, dashDuration);
                     break;
                 case DIR.Down:
                     //rb.velocity = Vector2.down * dashSpeed;
-                    velocity = Vector2.down * dashSpeed;
+                    velocity = Vector2.down * dashSpeed * 0.7f;
                     //Dash(Vector2.down * dashSpeed * 0.5f, dashDuration);
                     break;
                 case DIR.Left:
