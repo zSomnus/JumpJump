@@ -460,6 +460,11 @@ MonoBehaviour:
   maxFallSpeed: 15
   fallMultiplier: 8
   lowJumpMultiplier: 30
+  bottomOffset: {x: 0, y: -0.5}
+  boxSizeGround: {x: 0.65, y: 0.2}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
   wallSlideSpeed: 1
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
@@ -468,14 +473,9 @@ MonoBehaviour:
   dashDuration: 0.3
   dashCD: 0.2
   shadowCD: 0.1
-  bottomOffset: {x: 0, y: -0.5}
   rightOffset: {x: 0.36, y: 0}
   leftOffset: {x: -0.36, y: 0}
-  boxSizeGround: {x: 0.65, y: 0.2}
   boxSizeWall: {x: 0.07, y: 0.15}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 128
   weaponAnimator: {fileID: 661026234039363401}
   rangedCD: 0.3
 --- !u!1001 &1965686232539048118

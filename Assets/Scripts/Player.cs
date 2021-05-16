@@ -50,12 +50,9 @@ public class Player : GroundActor
     bool isDashCD;
 
     [Header("Collision")]
-    [SerializeField] private Vector2 bottomOffset;
     [SerializeField] private Vector2 rightOffset;
     [SerializeField] private Vector2 leftOffset;
-    [SerializeField] private Vector2 boxSizeGround;
     [SerializeField] private Vector2 boxSizeWall;
-    [SerializeField] LayerMask layerMask;
 
     [Header("Melee Attack")]
     [SerializeField] Animator weaponAnimator;
@@ -374,15 +371,15 @@ public class Player : GroundActor
         }
     }
 
-    bool IsOnGround()
-    {
-        return Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, boxSizeGround, 0f, layerMask);
-    }
+    //protected override bool IsOnGround()
+    //{
+    //    return Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, boxSizeGround, 0f, layerMask);
+    //}
 
     bool IsOnWall()
     {
-        onRightWall = Physics2D.OverlapBox((Vector2)transform.position + rightOffset, boxSizeWall, 0f, layerMask);
-        onLeftWall = Physics2D.OverlapBox((Vector2)transform.position + leftOffset, boxSizeWall, 0f, layerMask);
+        onRightWall = Physics2D.OverlapBox((Vector2)transform.position + rightOffset, boxSizeWall, 0f, groundLayer);
+        onLeftWall = Physics2D.OverlapBox((Vector2)transform.position + leftOffset, boxSizeWall, 0f, groundLayer);
 
         return onRightWall || onLeftWall;
     }
@@ -438,12 +435,11 @@ public class Player : GroundActor
         return base.OnDamage(damage);
     }
 
-    private void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Vector3 center = transform.position;
-        Gizmos.DrawWireCube(new Vector3(center.x + bottomOffset.x, center.y + bottomOffset.y, center.z), boxSizeGround);
-        Gizmos.DrawWireCube(new Vector3(center.x + rightOffset.x, center.y + rightOffset.y, center.z), boxSizeWall);
-        Gizmos.DrawWireCube(new Vector3(center.x + leftOffset.x, center.y + leftOffset.y, center.z), boxSizeWall);
+        base.OnDrawGizmosSelected();
+
+        Gizmos.DrawWireCube(new Vector3(transform.position.x + rightOffset.x, transform.position.y + rightOffset.y, transform.position.z), boxSizeWall);
+        Gizmos.DrawWireCube(new Vector3(transform.position.x + leftOffset.x, transform.position.y + leftOffset.y, transform.position.z), boxSizeWall);
     }
 }

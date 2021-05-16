@@ -104,7 +104,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: cde9768aa7a74c14dbdda505aa9e1a76, type: 2}
+  m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -200,3 +200,8 @@ MonoBehaviour:
   maxFallSpeed: 15
   fallMultiplier: 8
   lowJumpMultiplier: 30
+  bottomOffset: {x: 0, y: -0.78}
+  boxSizeGround: {x: 0.88, y: 0.15}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
