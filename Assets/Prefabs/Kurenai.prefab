@@ -469,6 +469,7 @@ MonoBehaviour:
   animationObjects:
   - {fileID: 2826981605148613424}
   - {fileID: 5775145564912565087}
+  - {fileID: 8516021757888469603}
   wallSlideSpeed: 1
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
@@ -547,5 +548,10 @@ Transform:
 --- !u!95 &661026234039363401 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1327412819716263935, guid: 28f80c3a66b4038408d39cf55d7a8628, type: 3}
+  m_PrefabInstance: {fileID: 1965686232539048118}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8516021757888469603 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7883966342136410837, guid: 28f80c3a66b4038408d39cf55d7a8628, type: 3}
   m_PrefabInstance: {fileID: 1965686232539048118}
   m_PrefabAsset: {fileID: 0}

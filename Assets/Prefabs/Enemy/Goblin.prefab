@@ -170,7 +170,7 @@ MonoBehaviour:
   isRanged: 0
   isMelee: 1
   centerOffset: {x: 0, y: -0.24, z: 0}
-  aggroRange: 10
+  aggroRange: 5
   attackRange: 1.5
   attackCD: 1
   bulletSpeed: 0
@@ -195,6 +195,7 @@ MonoBehaviour:
   animator: {fileID: 6841685164739941450}
   centerOffset: {x: 0, y: -0.24}
   mainCameraEffect: {fileID: 0}
+  canTakeSpikeDamage: 1
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
