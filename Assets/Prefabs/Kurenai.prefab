@@ -455,6 +455,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   centerOffset: {x: 0, y: 0}
   mainCameraEffect: {fileID: 0}
+  canTakeSpikeDamage: 1
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
@@ -468,7 +469,7 @@ MonoBehaviour:
   wallSlideSpeed: 1
   maxAirJumpCount: 1
   wingAnimator: {fileID: 3505642920615418078}
-  wallJumpFource: {x: 5, y: 10}
+  wallJumpFource: {x: 5, y: 7}
   dashSpeed: 15
   dashDuration: 0.3
   dashCD: 0.2
