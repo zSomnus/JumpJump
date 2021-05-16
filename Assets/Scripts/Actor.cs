@@ -120,7 +120,7 @@ public class Actor : MonoBehaviour
 
     public virtual int OnDamage(int damage)
     {
-
+        StartCoroutine(HitFlash());
         currentHp -= OnPreDamageApplication(damage);
 
         if (currentHp <= 0)
