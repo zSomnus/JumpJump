@@ -7,6 +7,7 @@ public class Actor : MonoBehaviour
 {
     protected ObjectPool objectPool;
     protected Rigidbody2D rb;
+    protected Collider2D baseCollider;
 
     [Header("Actor Info")]
     [SerializeField] int baseHp;
@@ -18,6 +19,7 @@ public class Actor : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] Vector2 centerOffset;
     [SerializeField] CameraEffect mainCameraEffect;
+    [SerializeField] protected bool canTakeSpikeDamage = true;
 
     public Animator Animator { get => animator; set => animator = value; }
     public Vector2 CenterOffset { get => centerOffset; set => centerOffset = value; }
@@ -33,6 +35,7 @@ public class Actor : MonoBehaviour
         mainMaterial = mainRenderer.material;
         animator = GetComponent<Animator>();
         currentHp = baseHp;
+        baseCollider = GetComponent<Collider2D>();
 
         OnAwake();
     }
@@ -146,6 +149,14 @@ public class Actor : MonoBehaviour
         mainMaterial.SetFloat("_FlashAmount", 1);
         yield return new WaitForSeconds(0.1f);
         mainMaterial.SetFloat("_FlashAmount", 0);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (canTakeSpikeDamage && collision.gameObject.layer == LayerMask.NameToLayer("Spike"))
+        {
+            OnDamage(currentHp);
+        }
     }
 
     protected virtual void OnAwake() { }
