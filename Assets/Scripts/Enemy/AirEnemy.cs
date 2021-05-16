@@ -15,9 +15,6 @@ public class AirEnemy : AirActor
     public override void OnDeath()
     {
         GetCameraEffect().ShackCamera(6f, 0.1f);
-        GameObject temp = objectPool.GetFromPool("DeathParticle");
-        temp.transform.position = transform.position;
-        temp.SetActive(true);
         base.OnDeath();
     }
 }

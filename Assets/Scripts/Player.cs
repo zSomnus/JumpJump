@@ -428,6 +428,8 @@ public class Player : GroundActor
 
     public override void OnDeath()
     {
+        GetCameraEffect().ShackCamera(5f, 0.1f);
+
         foreach (var obj in animationObjects)
         {
             obj.SetActive(false);

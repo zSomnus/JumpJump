@@ -146,6 +146,9 @@ public class Actor : MonoBehaviour
     public virtual void OnDeath()
     {
         OnPostDeath(this);
+        GameObject temp = objectPool.GetFromPool("DeathParticle");
+        temp.transform.position = transform.position;
+        temp.SetActive(true);
         gameObject.SetActive(false);
     }
 
