@@ -26,7 +26,19 @@ public class Actor : MonoBehaviour
 
     public event Action<Actor> OnPostDeath = delegate { };
 
+    protected virtual void OnEnable()
+    {
+        rb.gravityScale = 1;
+        currentHp = baseHp;
+    }
+
     private void Awake()
+    {
+        Init();
+        OnAwake();
+    }
+
+    protected virtual void Init()
     {
         objectPool = D.Get<ObjectPool>();
         mainCameraEffect = D.Get<CameraEffect>();
@@ -36,8 +48,6 @@ public class Actor : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHp = baseHp;
         baseCollider = GetComponent<Collider2D>();
-
-        OnAwake();
     }
 
     private void Start()
@@ -136,7 +146,7 @@ public class Actor : MonoBehaviour
     public virtual void OnDeath()
     {
         OnPostDeath(this);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     public CameraEffect GetCameraEffect()

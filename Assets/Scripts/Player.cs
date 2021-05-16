@@ -27,6 +27,8 @@ public enum DIR
 
 public class Player : GroundActor
 {
+    [SerializeField] GameObject[] animationObjects;
+
     [Header("Move")]
     [SerializeField] float wallSlideSpeed;
     bool onRightWall;
@@ -61,12 +63,19 @@ public class Player : GroundActor
     [SerializeField] float rangedCD;
     bool canShoot;
 
-    protected override void OnStart()
+    protected override void OnEnable()
     {
-        base.OnStart();
-        dashCD += dashDuration;
+        base.OnEnable();
+        Init();
+    }
+
+    protected override void Init()
+    {
+        base.Init();
         canShoot = true;
-        state = STATE.None;
+        canDash = true;
+        isDashing = false;
+        isDashCD = false;
     }
 
     // Update is called once per frame
@@ -209,52 +218,34 @@ public class Player : GroundActor
             switch (movingDirection)
             {
                 case DIR.Up:
-                    //rb.velocity = Vector2.up * dashSpeed;
                     velocity = Vector2.up * dashSpeed * 0.7f;
-                    //Dash(Vector2.up * dashSpeed, dashDuration);
                     break;
                 case DIR.Down:
-                    //rb.velocity = Vector2.down * dashSpeed;
                     velocity = Vector2.down * dashSpeed * 0.7f;
-                    //Dash(Vector2.down * dashSpeed * 0.5f, dashDuration);
                     break;
                 case DIR.Left:
-                    //rb.velocity = Vector2.left * dashSpeed * 2f;
                     velocity = Vector2.left * dashSpeed;
-                    //Dash(Vector2.left * dashSpeed, dashDuration);
                     break;
                 case DIR.Right:
-                    //rb.velocity = Vector2.right * dashSpeed * 2f;
                     velocity = Vector2.right * dashSpeed;
-                    //Dash(Vector2.right * dashSpeed, dashDuration);
                     break;
                 case DIR.UpRight:
-                    //rb.velocity = Vector2.up * dashSpeed / 0.2f + Vector2.right * dashSpeed / 0.2f;
                     velocity = Vector2.up * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
-                    //Dash(Vector2.up * dashSpeed * 0.5f + Vector2.right * dashSpeed * 0.5f, dashDuration);
                     break;
                 case DIR.DownRight:
-                    //rb.velocity = Vector2.down * dashSpeed / 0.2f + Vector2.right * dashSpeed / 0.2f;
                     velocity = Vector2.down * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
-                    //Dash(Vector2.down * dashSpeed * 0.5f + Vector2.right * dashSpeed * 0.5f, dashDuration);
                     break;
                 case DIR.UpLeft:
-                    //rb.velocity = Vector2.up * dashSpeed / 0.2f + Vector2.left * dashSpeed / 0.2f;
                     velocity = Vector2.up * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
-                    //Dash(Vector2.up * dashSpeed * 0.5f + Vector2.left * dashSpeed * 0.5f, dashDuration);
                     break;
                 case DIR.DownLeft:
-                    //rb.velocity = Vector2.down * dashSpeed / 0.2f + Vector2.left * dashSpeed / 0.2f;
                     velocity = Vector2.down * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
-                    //Dash(Vector2.down * dashSpeed * 0.5f + Vector2.left * dashSpeed * 0.5f, dashDuration);
                     break;
                 default:
                     velocity = new Vector2(transform.localScale.x * dashSpeed, 0f);
-                    //Dash(new Vector2(transform.localScale.x * dashSpeed, 0f), dashDuration);
                     break;
             }
 
-            //Dash(velocity, dashDuration);
             StartCoroutine(Dash(velocity, dashDuration));
             StartCoroutine(DashCooldown(dashCD));
         }
@@ -433,6 +424,16 @@ public class Player : GroundActor
     {
         GetCameraEffect().ShackCamera(5f, 0.1f);
         return base.OnDamage(damage);
+    }
+
+    public override void OnDeath()
+    {
+        foreach (var obj in animationObjects)
+        {
+            obj.SetActive(false);
+        }
+
+        base.OnDeath();
     }
 
     protected override void OnDrawGizmosSelected()

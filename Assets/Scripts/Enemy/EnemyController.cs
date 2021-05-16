@@ -178,10 +178,10 @@ public class EnemyController : MonoBehaviour
     {
         // Attack range;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(center, attackRange);
+        Gizmos.DrawWireSphere(transform.position + centerOffset, attackRange);
 
         // Aggro range
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, aggroRange);
+        Gizmos.DrawWireSphere(transform.position + centerOffset, aggroRange);
     }
 }
