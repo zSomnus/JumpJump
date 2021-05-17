@@ -482,7 +482,7 @@ MonoBehaviour:
   dashSpeed: 15
   dashDuration: 0.3
   dashCD: 0.5
-  shadowCD: 0.1
+  shadowCD: 0.05
   dashAudio: {fileID: 8300000, guid: c07154b17912b4045a234deebef874d7, type: 3}
   rightOffset: {x: 0.36, y: 0}
   leftOffset: {x: -0.36, y: 0}

@@ -54,6 +54,7 @@ public class Player : GroundActor
     bool isDashing;
     bool canDash;
     bool isDashCD;
+    bool isShadowStart;
 
     [Header("Collision")]
     [SerializeField] private Vector2 rightOffset;
@@ -136,7 +137,10 @@ public class Player : GroundActor
     {
         if (isDashing)
         {
-            StartCoroutine(GetShadow());
+            if (!isShadowStart)
+            {
+                StartCoroutine(GetShadow());
+            }
         }
     }
 
@@ -291,8 +295,10 @@ public class Player : GroundActor
 
     IEnumerator GetShadow()
     {
-        yield return new WaitForSeconds(shadowCD);
+        isShadowStart = true;
         objectPool.GetFromPool("PlayerShadow").SetActive(true);
+        yield return new WaitForSeconds(shadowCD);
+        isShadowStart = false;
     }
 
     IEnumerator DashCooldown(float cd)
