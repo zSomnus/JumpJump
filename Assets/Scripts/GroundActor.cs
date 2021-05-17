@@ -12,7 +12,7 @@ public class GroundActor : Actor
     [SerializeField] protected Vector2 bottomOffset;
     [SerializeField] protected Vector2 boxSizeGround;
     [SerializeField] protected LayerMask groundLayer;
-    [SerializeField] AudioClip landingAudio;
+    [SerializeField] protected AudioClip landingAudio;
 
     protected override void Update()
     {
@@ -25,6 +25,14 @@ public class GroundActor : Actor
         if (IsOnGround())
         {
             rb.gravityScale = 0;
+
+            if (landingAudio != null)
+            {
+                GameObject audioSourceObj = objectPool.GetFromPool("AudioSource");
+                audioSourceObj.transform.position = transform.position;
+                audioSourceObj.SetActive(true);
+                audioSourceObj.GetComponent<AudioSource>().PlayOneShot(landingAudio);
+            }
         }
         else
         {

@@ -41,6 +41,8 @@ public class Player : GroundActor
     int airJumpCount;
     [SerializeField] Animator wingAnimator;
     [SerializeField] Vector2 wallJumpFource;
+    [SerializeField] ParticleSystem landingParticle;
+    bool isLandingParticlePlayed;
 
     [Header("Dash")]
     [SerializeField] float dashSpeed;
@@ -92,10 +94,26 @@ public class Player : GroundActor
         if (state == STATE.Grounding || isDashing)
         {
             rb.gravityScale = 0;
+
+            if (!isLandingParticlePlayed)
+            {
+                landingParticle.Play();
+                Debug.Log("Play");
+                isLandingParticlePlayed = true;
+
+                if (landingAudio != null && state == STATE.Grounding)
+                {
+                    GameObject audioSourceObj = objectPool.GetFromPool("AudioSource");
+                    audioSourceObj.transform.position = transform.position;
+                    audioSourceObj.SetActive(true);
+                    audioSourceObj.GetComponent<AudioSource>().PlayOneShot(landingAudio);
+                }
+            }
         }
         else
         {
             rb.gravityScale = 1;
+            isLandingParticlePlayed = false;
         }
 
         base.Update();
@@ -390,6 +408,7 @@ public class Player : GroundActor
         {
             airJumpCount = 0;
             state = STATE.Grounding;
+
         }
         else if (IsOnWall() &&
                 ((onRightWall && Input.GetAxis("Horizontal") > 0.2f) ||
