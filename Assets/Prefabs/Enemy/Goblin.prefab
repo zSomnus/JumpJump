@@ -196,7 +196,7 @@ MonoBehaviour:
   centerOffset: {x: 0, y: -0.24}
   mainCameraEffect: {fileID: 0}
   canTakeSpikeDamage: 1
-  hitAudio: {fileID: 8300000, guid: 84b7c8a75cae6db48b3ff30bd59c9a7f, type: 3}
+  hitAudio: {fileID: 8300000, guid: 467d23a920246ed4b8ea44ae0e637047, type: 3}
   deathAudio: {fileID: 8300000, guid: 40ff7ba5e4fb2c0458b18704819fa71e, type: 3}
   jumpSpeed: 12
   minJumpSpeed: 10

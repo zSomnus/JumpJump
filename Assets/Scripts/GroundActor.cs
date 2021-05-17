@@ -28,10 +28,10 @@ public class GroundActor : Actor
 
             if (landingAudio != null)
             {
-                GameObject audioSourceObj = objectPool.GetFromPool("AudioSource");
-                audioSourceObj.transform.position = transform.position;
-                audioSourceObj.SetActive(true);
-                audioSourceObj.GetComponent<AudioSource>().PlayOneShot(landingAudio);
+                GameObject landingAudioObj = objectPool.GetFromPool("AudioSource");
+                landingAudioObj.transform.position = transform.position;
+                landingAudioObj.GetComponent<AudioPlayer>().SetAudioClip(landingAudio);
+                landingAudioObj.SetActive(true);
             }
         }
         else

@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class AudioPlayer : PoolableObject
 {
-    AudioSource audioSource;
+    [SerializeField] AudioSource audioSource;
     AudioClip audioClip;
-    private void Awake()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
-
+    
     public override void Reset()
     {
         audioClip = null;
+        audioSource.volume = 1;
+        audioSource.pitch = 1;
     }
 
     private void OnEnable()
@@ -32,8 +30,10 @@ public class AudioPlayer : PoolableObject
         }
     }
 
-    public void SetAudioClip(AudioClip audioClip)
+    public void SetAudioClip(AudioClip audioClip, float volume = 1, float pitch = 1)
     {
         this.audioClip = audioClip;
+        audioSource.volume = volume;
+        audioSource.pitch = pitch;
     }
 }

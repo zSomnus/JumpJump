@@ -43,12 +43,14 @@ public class Player : GroundActor
     [SerializeField] Vector2 wallJumpFource;
     [SerializeField] ParticleSystem landingParticle;
     bool isLandingParticlePlayed;
+    bool isWallSlideAudioPlayed;
 
     [Header("Dash")]
     [SerializeField] float dashSpeed;
     [SerializeField] float dashDuration;
     [SerializeField] float dashCD;
     [SerializeField] float shadowCD;
+    [SerializeField] AudioClip dashAudio;
     bool isDashing;
     bool canDash;
     bool isDashCD;
@@ -98,15 +100,15 @@ public class Player : GroundActor
             if (!isLandingParticlePlayed)
             {
                 landingParticle.Play();
-                Debug.Log("Play");
                 isLandingParticlePlayed = true;
 
+                // Play landing audio
                 if (landingAudio != null && state == STATE.Grounding)
                 {
                     GameObject audioSourceObj = objectPool.GetFromPool("AudioSource");
                     audioSourceObj.transform.position = transform.position;
+                    audioSourceObj.GetComponent<AudioPlayer>().SetAudioClip(landingAudio);
                     audioSourceObj.SetActive(true);
-                    audioSourceObj.GetComponent<AudioSource>().PlayOneShot(landingAudio);
                 }
             }
         }
@@ -306,6 +308,15 @@ public class Player : GroundActor
         rb.velocity = velocity;
         isDashing = true;
 
+        // Play dash audio
+        if (dashAudio != null)
+        {
+            GameObject dashAudioObj = objectPool.GetFromPool("AudioSource");
+            dashAudioObj.transform.position = transform.position;
+            dashAudioObj.GetComponent<AudioPlayer>().SetAudioClip(dashAudio, 0.3f, 0.5f);
+            dashAudioObj.SetActive(true);
+        }
+
         yield return new WaitForSeconds(duration);
 
         isDashing = false;
@@ -422,11 +433,22 @@ public class Player : GroundActor
             {
                 OnWallSlide(wallSlideSpeed);
                 state = STATE.WallSliding;
+
+                // Play touch wall audio
+                if (landingAudio != null && !isWallSlideAudioPlayed)
+                {
+                    GameObject touchWallAudioObj = objectPool.GetFromPool("AudioSource");
+                    touchWallAudioObj.transform.position = transform.position;
+                    touchWallAudioObj.GetComponent<AudioPlayer>().SetAudioClip(landingAudio);
+                    touchWallAudioObj.SetActive(true);
+                    isWallSlideAudioPlayed = true;
+                }
             }
         }
         else if (state != STATE.WallJumping)
         {
             state = STATE.InAir;
+            isWallSlideAudioPlayed = false;
         }
 
         if (state == STATE.Grounding || state == STATE.WallSliding)
