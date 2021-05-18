@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Vector3 centerOffset;
     [SerializeField] float aggroRange = 8;
     [SerializeField] float attackRange = 3;
+    [SerializeField] float safeHeight;
 
     [Header("Attack Info")]
     [SerializeField] float attackCD = 3;
@@ -111,11 +112,15 @@ public class EnemyController : MonoBehaviour
     {
         if (isRanged && canShoot && dis < aggroRange)
         {
-            if (dis > attackRange)
+            if (dis > attackRange && IsHeightSafe())
             {
                 rb.velocity = ((playerTransform.position - transform.position).normalized * owner.GetMoveSpeed());
             }
-            else
+            else if (dis > attackRange)
+            {
+                rb.velocity = (new Vector3(playerTransform.position.x - transform.position.x, 0).normalized * owner.GetMoveSpeed());
+            }
+            else if (dis <= attackRange)
             {
                 rb.velocity = Vector2.zero;
                 StartCoroutine(Shoot());
@@ -154,6 +159,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator Slash()
     {
+        FacePlayer();
         canSlash = false;
         animator.SetTrigger("Attack1");
 
@@ -174,6 +180,18 @@ public class EnemyController : MonoBehaviour
         return fireAngle;
     }
 
+    bool IsHeightSafe()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, safeHeight, LayerMask.GetMask("Foreground"));
+
+        if (hit.collider != null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private void OnDrawGizmosSelected()
     {
         // Attack range;
@@ -183,5 +201,9 @@ public class EnemyController : MonoBehaviour
         // Aggro range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + centerOffset, aggroRange);
+
+        // Save height ray
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(transform.position, Vector3.down * safeHeight);
     }
 }

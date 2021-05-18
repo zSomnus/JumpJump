@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class AirActor : Actor
 {
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        rb.gravityScale = 0;
+    }
     protected override void OnStart()
     {
         base.OnStart();
@@ -12,6 +17,9 @@ public class AirActor : Actor
     // Update is called once per frame
     protected override void Update()
     {
+
         base.Update();
     }
+
+    
 }

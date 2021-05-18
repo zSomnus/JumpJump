@@ -14,6 +14,12 @@ public class GroundActor : Actor
     [SerializeField] protected LayerMask groundLayer;
     [SerializeField] protected AudioClip landingAudio;
 
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        rb.gravityScale = 1;
+    }
     protected override void Update()
     {
         base.Update();

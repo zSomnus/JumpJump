@@ -30,7 +30,6 @@ public class Actor : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        rb.gravityScale = 1;
         currentHp = baseHp;
     }
 
@@ -176,7 +175,7 @@ public class Actor : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         mainMaterial.SetFloat("_FlashAmount", 0);
     }
-
+   
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (canTakeSpikeDamage && collision.gameObject.layer == LayerMask.NameToLayer("Spike"))

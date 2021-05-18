@@ -172,6 +172,7 @@ MonoBehaviour:
   centerOffset: {x: 0, y: 0, z: 0}
   aggroRange: 10
   attackRange: 6
+  safeHeight: 3.5
   attackCD: 3
   bulletSpeed: 8
   animator: {fileID: 3550063869171902615}
