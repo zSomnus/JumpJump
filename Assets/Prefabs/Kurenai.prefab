@@ -479,6 +479,7 @@ MonoBehaviour:
   wingAnimator: {fileID: 3505642920615418078}
   wallJumpFource: {x: 5, y: 7}
   landingParticle: {fileID: 7052516543962952003}
+  doubleJumpAudio: {fileID: 8300000, guid: 7817d32997268c641b532da70e2b7170, type: 3}
   dashSpeed: 15
   dashDuration: 0.3
   dashCD: 0.5

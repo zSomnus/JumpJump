@@ -54,9 +54,15 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (isMelee)
+        {
+            MeleeAttack();
+        }
 
-        RangedAttack();
-        MeleeAttack();
+        if (isRanged)
+        {
+            RangedAttack();
+        }
 
         if (canSlash && owner.isFacingMoveDirection == false)
         {
@@ -92,7 +98,7 @@ public class EnemyController : MonoBehaviour
 
     void MeleeAttack()
     {
-        if (isMelee && canSlash && dis < aggroRange)
+        if (canSlash && dis < aggroRange)
         {
             if (dis > attackRange)
             {
@@ -106,11 +112,15 @@ public class EnemyController : MonoBehaviour
                 StartCoroutine(Slash());
             }
         }
+        else if (rb.velocity != Vector2.zero)
+        {
+            rb.velocity = Vector2.zero;
+        }
     }
 
     void RangedAttack()
     {
-        if (isRanged && canShoot && dis < aggroRange)
+        if (canShoot && dis < aggroRange)
         {
             if (dis > attackRange && IsHeightSafe())
             {
@@ -125,6 +135,10 @@ public class EnemyController : MonoBehaviour
                 rb.velocity = Vector2.zero;
                 StartCoroutine(Shoot());
             }
+        }
+        else if (rb.velocity != Vector2.zero)
+        {
+            rb.velocity = Vector2.zero;
         }
     }
 

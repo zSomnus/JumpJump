@@ -42,6 +42,7 @@ public class Player : GroundActor
     [SerializeField] Animator wingAnimator;
     [SerializeField] Vector2 wallJumpFource;
     [SerializeField] ParticleSystem landingParticle;
+    [SerializeField] AudioClip doubleJumpAudio;
     bool isLandingParticlePlayed;
     bool isWallSlideAudioPlayed;
 
@@ -195,6 +196,15 @@ public class Player : GroundActor
             wingAnimator.SetTrigger("DoubleJump");
             rb.velocity = new Vector2(0, jumpSpeed);
             airJumpCount++;
+
+            // play double jump audio
+            if (doubleJumpAudio != null)
+            {
+                GameObject doubleJumpAudioObj = objectPool.GetFromPool("AudioSource");
+                doubleJumpAudioObj.transform.position = transform.position;
+                doubleJumpAudioObj.GetComponent<AudioPlayer>().SetAudioClip(doubleJumpAudio, 0.3f);
+                doubleJumpAudioObj.SetActive(true);
+            }
         }
     }
 

@@ -13,7 +13,9 @@ public class Bullet : PoolableObject
     [SerializeField] float activeStart;
     [SerializeField] float speed;
     [SerializeField] int damage = 1;
-    Vector2 startSpeed;
+    [SerializeField] Vector2 startSpeed;
+    [SerializeField] LayerMask layerMask;
+    [SerializeField] Vector3 size;
 
     public override void Reset()
     {
@@ -69,16 +71,25 @@ public class Bullet : PoolableObject
             // Return to the Object Pool
             gameObject.SetActive(false);
         }
-    }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
+        Collider2D collision = Physics2D.OverlapBox(transform.position, size, 0f, layerMask);
         // Return to the Object Pool
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (collision != null)
         {
-            collision.gameObject.GetComponent<Actor>().OnDamage(damage);
+            if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            {
+                collision.gameObject.GetComponent<Actor>().OnDamage(damage);
+            }
+
+            gameObject.SetActive(false);
         }
 
-        gameObject.SetActive(false);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Vector3 center = transform.position;
+        Gizmos.DrawWireCube(center, size);
     }
 }
