@@ -7,6 +7,7 @@ public class Bullet : PoolableObject
     Transform playerTransform;
     Rigidbody2D rb;
     Vector2 direction;
+    Player player;
 
     [SerializeField] float scale = 1;
     [SerializeField] float activeTime;
@@ -28,23 +29,21 @@ public class Bullet : PoolableObject
 
     private void Awake()
     {
-        if (GameObject.FindGameObjectWithTag("Player"))
-        {
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-            rb = GetComponent<Rigidbody2D>();
-        }
+        player = D.Get<Player>();
+        playerTransform = player.gameObject.transform;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnEnable()
     {
         if (playerTransform != null)
         {
-            if (Input.GetAxis("Vertical") > 0.5f)
+            if (player.Direction.y > 0.5f)
             {
                 direction.y = 1;
                 transform.rotation = Quaternion.Euler(0, 0, 90);
             }
-            else if (Input.GetAxis("Vertical") < -0.5f)
+            else if (player.Direction.y < -0.5f)
             {
                 direction.y = -1;
                 transform.rotation = Quaternion.Euler(0, 0, -90);
@@ -83,7 +82,6 @@ public class Bullet : PoolableObject
 
             gameObject.SetActive(false);
         }
-
     }
 
     private void OnDrawGizmosSelected()

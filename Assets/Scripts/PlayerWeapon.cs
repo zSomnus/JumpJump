@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerWeapon : MonoBehaviour
 {
     ObjectPool objectPool;
+    Player player;
     [SerializeField] int damage;
+    [SerializeField] int lifeStealAmount;
     float damageCD = 0.2f;
     [SerializeField] AudioClip whipAudio;
 
@@ -13,6 +15,7 @@ public class PlayerWeapon : MonoBehaviour
     void Awake()
     {
         objectPool = D.Get<ObjectPool>();
+        player = D.Get<Player>();
     }
 
     private void OnEnable()
@@ -32,7 +35,7 @@ public class PlayerWeapon : MonoBehaviour
         {
             GameObject whipAudioObj = objectPool.GetFromPool("AudioSource");
             whipAudioObj.transform.position = transform.position;
-            whipAudioObj.GetComponent<AudioPlayer>().SetAudioClip(whipAudio, 0.2f, 0.2f);
+            whipAudioObj.GetComponent<AudioPlayer>().SetAudioClip(whipAudio, 1f, 0.5f);
             whipAudioObj.SetActive(true);
         }
     }
@@ -42,6 +45,7 @@ public class PlayerWeapon : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             StartCoroutine(Attack(collision));
+            player.OnHeal(lifeStealAmount);
         }
     }
 }

@@ -116,7 +116,15 @@ public class Actor : MonoBehaviour
 
     public virtual void OnHeal(int heal)
     {
-        currentHp += heal;
+        if (currentHp + heal <= baseHp)
+        {
+            currentHp += heal;
+        }
+        else
+        {
+            currentHp = baseHp;
+        }
+
         UpdateHp();
     }
 
@@ -136,6 +144,18 @@ public class Actor : MonoBehaviour
         }
 
         return damage;
+    }
+
+    public virtual int OnHpCost(int cost)
+    {
+        currentHp -= OnPreDamageApplication(cost);
+
+        if (currentHp <= 0)
+        {
+            OnDeath();
+        }
+
+        return cost;
     }
 
     protected virtual int OnPreDamageApplication(int damage)
@@ -175,7 +195,7 @@ public class Actor : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         mainMaterial.SetFloat("_FlashAmount", 0);
     }
-   
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (canTakeSpikeDamage && collision.gameObject.layer == LayerMask.NameToLayer("Spike"))

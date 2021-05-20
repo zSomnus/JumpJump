@@ -175,4 +175,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 2
+  lifeStealAmount: 10
   whipAudio: {fileID: 8300000, guid: 4aff49811506be04e940e0a0d7714502, type: 3}

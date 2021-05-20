@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum STATE
@@ -35,6 +34,7 @@ public class Player : GroundActor
     bool onLeftWall;
     DIR movingDirection;
     STATE state;
+    Vector2 direction;
 
     [Header("Jump")]
     [SerializeField] int maxAirJumpCount;
@@ -45,6 +45,7 @@ public class Player : GroundActor
     [SerializeField] AudioClip doubleJumpAudio;
     bool isLandingParticlePlayed;
     bool isWallSlideAudioPlayed;
+    bool isJumpPressed;
 
     [Header("Dash")]
     [SerializeField] float dashSpeed;
@@ -53,9 +54,9 @@ public class Player : GroundActor
     [SerializeField] float shadowCD;
     [SerializeField] AudioClip dashAudio;
     bool isDashing;
-    bool canDash;
     bool isDashCD;
     bool isShadowStart;
+    bool isDashPressed;
 
     [Header("Collision")]
     [SerializeField] private Vector2 rightOffset;
@@ -69,6 +70,10 @@ public class Player : GroundActor
     [SerializeField] float rangedCD;
     bool canShoot;
 
+    public Vector2 Direction { get => direction; set => direction = value; }
+    public bool IsJumpPressed { get => isJumpPressed; set => isJumpPressed = value; }
+    public bool IsDashPressed { get => isDashPressed; set => isDashPressed = value; }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -79,7 +84,6 @@ public class Player : GroundActor
     {
         base.Init();
         canShoot = true;
-        canDash = true;
         isDashing = false;
         isDashCD = false;
     }
@@ -89,11 +93,6 @@ public class Player : GroundActor
     {
         PlayerState();
         movingDirection = GetMovingDirection();
-        Dash();
-        Jump();
-        Shoot();
-        DoubleJump();
-        Attack();
 
         if (state == STATE.Grounding || isDashing)
         {
@@ -149,11 +148,11 @@ public class Player : GroundActor
     {
         if (state == STATE.Grounding)
         {
-            bool playerHasHorizontalSpeed = Input.GetAxis("Horizontal") != 0;
+            bool playerHasHorizontalSpeed = direction.x != 0;
 
             if (playerHasHorizontalSpeed)
             {
-                transform.localScale = new Vector2(Mathf.Sign(Input.GetAxis("Horizontal")), 1f);
+                transform.localScale = new Vector2(Mathf.Sign(direction.x), 1f);
             }
         }
         else
@@ -162,9 +161,51 @@ public class Player : GroundActor
         }
     }
 
-    void Run()
+    public void Dash()
     {
-        float runInput = Input.GetAxis("Horizontal");
+        if (state != STATE.WallSliding && !isDashing && !isDashCD)
+        {
+            Vector2 velocity = Vector2.zero;
+
+            switch (movingDirection)
+            {
+                case DIR.Up:
+                    velocity = Vector2.up * dashSpeed * 0.7f;
+                    break;
+                case DIR.Down:
+                    velocity = Vector2.down * dashSpeed * 0.7f;
+                    break;
+                case DIR.Left:
+                    velocity = Vector2.left * dashSpeed;
+                    break;
+                case DIR.Right:
+                    velocity = Vector2.right * dashSpeed;
+                    break;
+                case DIR.UpRight:
+                    velocity = Vector2.up * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
+                    break;
+                case DIR.DownRight:
+                    velocity = Vector2.down * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
+                    break;
+                case DIR.UpLeft:
+                    velocity = Vector2.up * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
+                    break;
+                case DIR.DownLeft:
+                    velocity = Vector2.down * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
+                    break;
+                default:
+                    velocity = new Vector2(transform.localScale.x * dashSpeed, 0f);
+                    break;
+            }
+
+            StartCoroutine(Dash(velocity, dashDuration));
+            StartCoroutine(DashCooldown(dashCD));
+        }
+    }
+
+    public void Run()
+    {
+        float runInput = direction.x;
 
         if (runInput > 0)
         {
@@ -179,41 +220,6 @@ public class Player : GroundActor
             runInput = 0f;
         }
         rb.velocity = new Vector2(runInput, rb.velocity.y);
-    }
-
-    void Jump()
-    {
-        if (state == STATE.Grounding && Input.GetButtonDown("Jump"))
-        {
-            rb.velocity = new Vector2(0, jumpSpeed);
-        }
-    }
-
-    void DoubleJump()
-    {
-        if (state == STATE.InAir && airJumpCount < maxAirJumpCount && Input.GetButtonDown("Jump"))
-        {
-            wingAnimator.SetTrigger("DoubleJump");
-            rb.velocity = new Vector2(0, jumpSpeed);
-            airJumpCount++;
-
-            // play double jump audio
-            if (doubleJumpAudio != null)
-            {
-                GameObject doubleJumpAudioObj = objectPool.GetFromPool("AudioSource");
-                doubleJumpAudioObj.transform.position = transform.position;
-                doubleJumpAudioObj.GetComponent<AudioPlayer>().SetAudioClip(doubleJumpAudio, 0.3f);
-                doubleJumpAudioObj.SetActive(true);
-            }
-        }
-    }
-
-    void WallJump()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            StartCoroutine(WallJumpTimer());
-        }
     }
 
     IEnumerator WallJumpTimer()
@@ -235,17 +241,10 @@ public class Player : GroundActor
         state = STATE.InAir;
     }
 
-    void Attack()
+    public void DashAction()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            weaponAnimator.SetTrigger("Attack");
-        }
-    }
 
-    void Dash()
-    {
-        if (state != STATE.WallSliding && !isDashing && !isDashCD && canDash && (Input.GetButtonDown("Dash") || Input.GetAxisRaw("Dash") > 0.2f))
+        if (state != STATE.WallSliding && !isDashing && !isDashCD)
         {
             Vector2 velocity = Vector2.zero;
 
@@ -286,11 +285,12 @@ public class Player : GroundActor
 
     }
 
-    void Shoot()
+    public void RangedAttack()
     {
-        if (Input.GetButton("Fire2") && canShoot)
+        if (canShoot)
         {
             StartCoroutine(ShootCooldownCount());
+            OnHpCost(10);
             GameObject bullet = objectPool.GetFromPool("Bullet");
             bullet.SetActive(true);
         }
@@ -299,6 +299,7 @@ public class Player : GroundActor
     IEnumerator ShootCooldownCount()
     {
         canShoot = false;
+
         yield return new WaitForSeconds(rangedCD);
         canShoot = true;
     }
@@ -320,7 +321,6 @@ public class Player : GroundActor
 
     IEnumerator Dash(Vector2 velocity, float duration)
     {
-        canDash = false;
         rb.velocity = velocity;
         isDashing = true;
 
@@ -351,7 +351,7 @@ public class Player : GroundActor
                 rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
 
             }
-            else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
+            else if (rb.velocity.y > 0 && !isJumpPressed)
             {
                 rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
             }
@@ -360,13 +360,13 @@ public class Player : GroundActor
 
     private DIR GetMovingDirection()
     {
-        if (Input.GetAxis("Vertical") > 0.2f)
+        if (direction.y > 0.2f)
         {
-            if (Input.GetAxis("Horizontal") > 0.2f)
+            if (direction.x > 0.2f)
             {
                 return DIR.UpRight;
             }
-            else if (Input.GetAxis("Horizontal") < -0.2f)
+            else if (direction.x < -0.2f)
             {
                 return DIR.UpLeft;
             }
@@ -375,13 +375,13 @@ public class Player : GroundActor
                 return DIR.Up;
             }
         }
-        else if (Input.GetAxis("Vertical") < -0.2f)
+        else if (direction.y < -0.2f)
         {
-            if (Input.GetAxis("Horizontal") > 0.2f)
+            if (direction.x > 0.2f)
             {
                 return DIR.DownRight;
             }
-            else if (Input.GetAxis("Horizontal") < -0.2f)
+            else if (direction.x < -0.2f)
             {
                 return DIR.DownLeft;
             }
@@ -392,11 +392,11 @@ public class Player : GroundActor
         }
         else
         {
-            if (Input.GetAxis("Horizontal") > 0.2f)
+            if (direction.x > 0.2f)
             {
                 return DIR.Right;
             }
-            else if (Input.GetAxis("Horizontal") < -0.2f)
+            else if (direction.x < -0.2f)
             {
                 return DIR.Left;
             }
@@ -406,11 +406,6 @@ public class Player : GroundActor
             }
         }
     }
-
-    //protected override bool IsOnGround()
-    //{
-    //    return Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, boxSizeGround, 0f, layerMask);
-    //}
 
     bool IsOnWall()
     {
@@ -437,11 +432,9 @@ public class Player : GroundActor
             state = STATE.Grounding;
 
         }
-        else if (IsOnWall() &&
-                ((onRightWall && Input.GetAxis("Horizontal") > 0.2f) ||
-                (onLeftWall && Input.GetAxis("Horizontal") < -0.2f)))
+        else if (IsOnWall() && ((direction.x > 0.2f) || (direction.x < -0.2f)))
         {
-            if (Input.GetButtonDown("Jump"))
+            if (isJumpPressed)
             {
                 WallJump();
             }
@@ -467,13 +460,13 @@ public class Player : GroundActor
             isWallSlideAudioPlayed = false;
         }
 
-        if (state == STATE.Grounding || state == STATE.WallSliding)
-        {
-            if (Input.GetAxis("Dash") <= 0.1f)
-            {
-                canDash = true;
-            }
-        }
+        //if (state == STATE.Grounding || state == STATE.WallSliding)
+        //{
+        //    if (!IsDashPressed)
+        //    {
+        //        canDash = true;
+        //    }
+        //}
 
     }
 
@@ -493,6 +486,46 @@ public class Player : GroundActor
         }
 
         base.OnDeath();
+    }
+
+    public void MeleeAttack()
+    {
+        weaponAnimator.SetTrigger("Attack");
+    }
+
+    public void Jump()
+    {
+        if (state == STATE.Grounding)
+        {
+            rb.velocity = new Vector2(0, jumpSpeed);
+        }
+    }
+
+    public void DoubleJump()
+    {
+        if (state == STATE.InAir && airJumpCount < maxAirJumpCount)
+        {
+            wingAnimator.SetTrigger("DoubleJump");
+            rb.velocity = new Vector2(0, jumpSpeed);
+            airJumpCount++;
+
+            // play double jump audio
+            if (doubleJumpAudio != null)
+            {
+                GameObject doubleJumpAudioObj = objectPool.GetFromPool("AudioSource");
+                doubleJumpAudioObj.transform.position = transform.position;
+                doubleJumpAudioObj.GetComponent<AudioPlayer>().SetAudioClip(doubleJumpAudio, 0.3f);
+                doubleJumpAudioObj.SetActive(true);
+            }
+        }
+    }
+
+    public void WallJump()
+    {
+        if (!IsOnGround() && IsOnWall())
+        {
+            StartCoroutine(WallJumpTimer());
+        }
     }
 
     protected override void OnDrawGizmosSelected()
