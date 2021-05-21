@@ -57,6 +57,7 @@ public class Player : GroundActor
     bool isDashCD;
     bool isShadowStart;
     bool isDashPressed;
+    bool canDash;
 
     [Header("Collision")]
     [SerializeField] private Vector2 rightOffset;
@@ -84,13 +85,17 @@ public class Player : GroundActor
     {
         base.Init();
         canShoot = true;
+        canDash = true;
         isDashing = false;
         isDashCD = false;
+        isShadowStart = false;
     }
 
     // Update is called once per frame
     protected override void Update()
     {
+        base.Update();
+
         PlayerState();
         movingDirection = GetMovingDirection();
 
@@ -118,13 +123,12 @@ public class Player : GroundActor
             rb.gravityScale = 1;
             isLandingParticlePlayed = false;
         }
-
-        base.Update();
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
+
         if (!isDashing && state != STATE.WallJumping)
         {
             Run();
@@ -163,8 +167,11 @@ public class Player : GroundActor
 
     public void Dash()
     {
-        if (state != STATE.WallSliding && !isDashing && !isDashCD)
+        bool dashState = !isDashPressed && state != STATE.WallSliding && !isDashing && !isDashCD && canDash;
+
+        if (dashState)
         {
+            canDash = false;
             Vector2 velocity = Vector2.zero;
 
             switch (movingDirection)
@@ -201,6 +208,34 @@ public class Player : GroundActor
             StartCoroutine(Dash(velocity, dashDuration));
             StartCoroutine(DashCooldown(dashCD));
         }
+    }
+
+    IEnumerator Dash(Vector2 velocity, float duration)
+    {
+        rb.velocity = velocity;
+        isDashing = true;
+
+        // Play dash audio
+        if (dashAudio != null)
+        {
+            GameObject dashAudioObj = objectPool.GetFromPool("AudioSource");
+            dashAudioObj.transform.position = transform.position;
+            dashAudioObj.GetComponent<AudioPlayer>().SetAudioClip(dashAudio, 0.3f, 0.5f);
+            dashAudioObj.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        isDashing = false;
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = 1;
+    }
+
+    IEnumerator DashCooldown(float cd)
+    {
+        isDashCD = true;
+        yield return new WaitForSeconds(cd);
+        isDashCD = false;
     }
 
     public void Run()
@@ -239,50 +274,7 @@ public class Player : GroundActor
         rb.velocity = new Vector2(x, wallJumpFource.y);
         yield return new WaitForSeconds(0.2f);
         state = STATE.InAir;
-    }
-
-    public void DashAction()
-    {
-
-        if (state != STATE.WallSliding && !isDashing && !isDashCD)
-        {
-            Vector2 velocity = Vector2.zero;
-
-            switch (movingDirection)
-            {
-                case DIR.Up:
-                    velocity = Vector2.up * dashSpeed * 0.7f;
-                    break;
-                case DIR.Down:
-                    velocity = Vector2.down * dashSpeed * 0.7f;
-                    break;
-                case DIR.Left:
-                    velocity = Vector2.left * dashSpeed;
-                    break;
-                case DIR.Right:
-                    velocity = Vector2.right * dashSpeed;
-                    break;
-                case DIR.UpRight:
-                    velocity = Vector2.up * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
-                    break;
-                case DIR.DownRight:
-                    velocity = Vector2.down * dashSpeed * 0.7f + Vector2.right * dashSpeed * 0.7f;
-                    break;
-                case DIR.UpLeft:
-                    velocity = Vector2.up * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
-                    break;
-                case DIR.DownLeft:
-                    velocity = Vector2.down * dashSpeed * 0.7f + Vector2.left * dashSpeed * 0.7f;
-                    break;
-                default:
-                    velocity = new Vector2(transform.localScale.x * dashSpeed, 0f);
-                    break;
-            }
-
-            StartCoroutine(Dash(velocity, dashDuration));
-            StartCoroutine(DashCooldown(dashCD));
-        }
-
+        canDash = true;
     }
 
     public void RangedAttack()
@@ -312,34 +304,6 @@ public class Player : GroundActor
         isShadowStart = false;
     }
 
-    IEnumerator DashCooldown(float cd)
-    {
-        isDashCD = true;
-        yield return new WaitForSeconds(cd);
-        isDashCD = false;
-    }
-
-    IEnumerator Dash(Vector2 velocity, float duration)
-    {
-        rb.velocity = velocity;
-        isDashing = true;
-
-        // Play dash audio
-        if (dashAudio != null)
-        {
-            GameObject dashAudioObj = objectPool.GetFromPool("AudioSource");
-            dashAudioObj.transform.position = transform.position;
-            dashAudioObj.GetComponent<AudioPlayer>().SetAudioClip(dashAudio, 0.3f, 0.5f);
-            dashAudioObj.SetActive(true);
-        }
-
-        yield return new WaitForSeconds(duration);
-
-        isDashing = false;
-        rb.velocity = Vector2.zero;
-        rb.gravityScale = 1;
-    }
-
     protected override void SimulatePhysics()
     {
         if (!isDashing && (state != STATE.WallJumping) && (state != STATE.Grounding))
@@ -356,17 +320,22 @@ public class Player : GroundActor
                 rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
             }
         }
+
+        if (isDashing && IsOnWall())
+        {
+            rb.velocity = Vector2.zero;
+        }
     }
 
     private DIR GetMovingDirection()
     {
-        if (direction.y > 0.2f)
+        if (direction.y > 0.5f)
         {
-            if (direction.x > 0.2f)
+            if (direction.x > 0.5f)
             {
                 return DIR.UpRight;
             }
-            else if (direction.x < -0.2f)
+            else if (direction.x < -0.5f)
             {
                 return DIR.UpLeft;
             }
@@ -375,13 +344,13 @@ public class Player : GroundActor
                 return DIR.Up;
             }
         }
-        else if (direction.y < -0.2f)
+        else if (direction.y < -0.5f)
         {
-            if (direction.x > 0.2f)
+            if (direction.x > 0.5f)
             {
                 return DIR.DownRight;
             }
-            else if (direction.x < -0.2f)
+            else if (direction.x < -0.5f)
             {
                 return DIR.DownLeft;
             }
@@ -392,11 +361,11 @@ public class Player : GroundActor
         }
         else
         {
-            if (direction.x > 0.2f)
+            if (direction.x > 0.5f)
             {
                 return DIR.Right;
             }
-            else if (direction.x < -0.2f)
+            else if (direction.x < -0.5f)
             {
                 return DIR.Left;
             }
@@ -417,57 +386,11 @@ public class Player : GroundActor
 
     void OnWallSlide(float slideSpeed)
     {
-        if (state != STATE.WallJumping)
+        if (rb.velocity.y < 0)
         {
             rb.velocity = new Vector2(0, -slideSpeed);
             airJumpCount = 0;
         }
-    }
-
-    void PlayerState()
-    {
-        if (IsOnGround())
-        {
-            airJumpCount = 0;
-            state = STATE.Grounding;
-
-        }
-        else if (IsOnWall() && ((direction.x > 0.2f) || (direction.x < -0.2f)))
-        {
-            if (isJumpPressed)
-            {
-                WallJump();
-            }
-            else if (state != STATE.WallJumping)
-            {
-                OnWallSlide(wallSlideSpeed);
-                state = STATE.WallSliding;
-
-                // Play touch wall audio
-                if (landingAudio != null && !isWallSlideAudioPlayed)
-                {
-                    GameObject touchWallAudioObj = objectPool.GetFromPool("AudioSource");
-                    touchWallAudioObj.transform.position = transform.position;
-                    touchWallAudioObj.GetComponent<AudioPlayer>().SetAudioClip(landingAudio);
-                    touchWallAudioObj.SetActive(true);
-                    isWallSlideAudioPlayed = true;
-                }
-            }
-        }
-        else if (state != STATE.WallJumping)
-        {
-            state = STATE.InAir;
-            isWallSlideAudioPlayed = false;
-        }
-
-        //if (state == STATE.Grounding || state == STATE.WallSliding)
-        //{
-        //    if (!IsDashPressed)
-        //    {
-        //        canDash = true;
-        //    }
-        //}
-
     }
 
     public override int OnDamage(int damage)
@@ -503,7 +426,7 @@ public class Player : GroundActor
 
     public void DoubleJump()
     {
-        if (state == STATE.InAir && airJumpCount < maxAirJumpCount)
+        if (!IsOnWall() && state == STATE.InAir && airJumpCount < maxAirJumpCount)
         {
             wingAnimator.SetTrigger("DoubleJump");
             rb.velocity = new Vector2(0, jumpSpeed);
@@ -522,9 +445,35 @@ public class Player : GroundActor
 
     public void WallJump()
     {
-        if (!IsOnGround() && IsOnWall())
+        if (!isJumpPressed && !IsOnGround() && IsOnWall())
         {
             StartCoroutine(WallJumpTimer());
+        }
+    }
+    void PlayerState()
+    {
+        if (IsOnGround())
+        {
+            airJumpCount = 0;
+            state = STATE.Grounding;
+
+            if (!isDashPressed)
+            {
+                canDash = true;
+            }
+        }
+        else
+        {
+            if (state != STATE.WallJumping)
+            {
+                state = STATE.InAir;
+            }
+
+            if (IsOnWall())
+            {
+                canDash = false;
+                OnWallSlide(wallSlideSpeed);
+            }
         }
     }
 

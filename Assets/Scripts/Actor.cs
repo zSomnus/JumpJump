@@ -59,11 +59,19 @@ public class Actor : MonoBehaviour
 
     protected virtual void Update()
     {
-
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
     }
 
     protected virtual void FixedUpdate()
     {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         FlipSprite();
     }
 

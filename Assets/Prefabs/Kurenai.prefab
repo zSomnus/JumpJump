@@ -465,7 +465,7 @@ MonoBehaviour:
   fallMultiplier: 8
   lowJumpMultiplier: 30
   bottomOffset: {x: 0, y: -0.5}
-  boxSizeGround: {x: 0.65, y: 0.2}
+  boxSizeGround: {x: 0.65, y: 0.1}
   groundLayer:
     serializedVersion: 2
     m_Bits: 128

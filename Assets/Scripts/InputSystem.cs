@@ -11,6 +11,11 @@ public class InputSystem : MonoBehaviour
 
     void Awake()
     {
+        if (!player.gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         controls = new InputControls();
         controls.Player.MeleeAttack.performed += ctx => player.MeleeAttack();
         controls.Player.RangedAttack.performed += ctx => player.RangedAttack();
