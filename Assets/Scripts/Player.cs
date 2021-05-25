@@ -89,6 +89,7 @@ public class Player : GroundActor
         isDashing = false;
         isDashCD = false;
         isShadowStart = false;
+        direction = Vector2.zero;
     }
 
     // Update is called once per frame

@@ -9,6 +9,8 @@ public class EnemyController : MonoBehaviour
     Actor owner;
     Vector3 center;
     private ObjectPool objectPool;
+    GameDirector gameDirector;
+
     [Header("Enemy Info")]
     [SerializeField] int damage;
     [SerializeField] bool isRanged;
@@ -37,12 +39,16 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
+        Init(GetComponent<Actor>(), D.Get<ObjectPool>());
+
         canShoot = true;
         canSlash = true;
         player = D.Get<Player>();
         playerTransform = player.transform;
         rb = GetComponent<Rigidbody2D>();
-        Init(GetComponent<Actor>(), D.Get<ObjectPool>());
+        gameDirector = D.Get<GameDirector>();
+        gameDirector.EnemyCountIncrease();
+        owner.OnPostDeath += gameDirector.EnemyCountDecrease;
         animator = owner.Animator;
     }
 
@@ -218,6 +224,6 @@ public class EnemyController : MonoBehaviour
 
         // Save height ray
         Gizmos.color = Color.magenta;
-        Gizmos.DrawLine(transform.position, Vector3.down * safeHeight);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * safeHeight);
     }
 }

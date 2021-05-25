@@ -9,11 +9,15 @@ public class LevelController : MonoBehaviour
     bool reseting;
     Player player;
     GameObject playerObject;
+    [SerializeField] GameObject levelDoor;
+    GameDirector gameDirector;
     // Start is called before the first frame update
     void Start()
     {
         player = D.Get<Player>();
         playerObject = player.gameObject;
+        levelDoor.SetActive(false);
+        gameDirector = D.Get<GameDirector>();
 
         if (playerObject != null)
         {
@@ -27,6 +31,11 @@ public class LevelController : MonoBehaviour
         if (playerObject.activeInHierarchy == false && !reseting)
         {
             StartCoroutine(ResetPlayer());
+        }
+
+        if (gameDirector.EnemyCount <= 0 && levelDoor.activeInHierarchy == false)
+        {
+            levelDoor.SetActive(true);
         }
     }
 
