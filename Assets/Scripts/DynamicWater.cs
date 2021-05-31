@@ -75,6 +75,7 @@ public class DynamicWater : MonoBehaviour
         }
 
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.sortingLayerName = "Mid";
 
         if (waterMaterial)
         {
@@ -110,6 +111,14 @@ public class DynamicWater : MonoBehaviour
     private void SetBosCollider2D()
     {
         BoxCollider2D col = GetComponent<BoxCollider2D>();
+
+        float width = bound.right - bound.left;
+        float height = bound.top - bound.bottom;
+
+        Vector2 offset = new Vector2((bound.right + bound.left) / 2f, (bound.top + bound.bottom) / 2f);
+
+        col.size = new Vector2(width, height);
+        col.offset = offset;
         col.isTrigger = true;
     }
 
@@ -165,7 +174,6 @@ public class DynamicWater : MonoBehaviour
             if (PointInsideCircle(vertices[i], center, radius))
             {
                 velocities[i] = force;
-                Debug.Log("Boom");
             }
         }
     }
