@@ -15,10 +15,14 @@ public class Interactable : MonoBehaviour
     [SerializeField] GameObject iconGameObject;
     public Action OnInteraction;
 
+    // Temp value
+    GameDirector gameDirector;
+
     // Start is called before the first frame update
     void Start()
     {
         iconGameObject.SetActive(false);
+        gameDirector = D.Get<GameDirector>();
     }
 
     // Update is called once per frame
@@ -37,6 +41,8 @@ public class Interactable : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             iconGameObject.SetActive(true);
+            gameDirector.UnloadLevel("Map0");
+            gameDirector.LoadLevel("Map1");
         }
     }
 

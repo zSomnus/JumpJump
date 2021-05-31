@@ -10,6 +10,7 @@ public class LevelController : MonoBehaviour
     Player player;
     GameObject playerObject;
     [SerializeField] GameObject levelDoor;
+    [SerializeField] string nextLevel;
     GameDirector gameDirector;
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,7 @@ public class LevelController : MonoBehaviour
         playerObject = player.gameObject;
         levelDoor.SetActive(false);
         gameDirector = D.Get<GameDirector>();
+        gameDirector.SetCameraCollider();
 
         if (playerObject != null)
         {

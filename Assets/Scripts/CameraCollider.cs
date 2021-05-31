@@ -4,18 +4,23 @@ using UnityEngine;
 
 public class CameraCollider : MonoBehaviour
 {
-    GameObject colliderObj;
+    GameObject cameraCollider;
     // Start is called before the first frame update
     void Start()
     {
-        colliderObj = GameObject.FindGameObjectWithTag("CameraCollider");
-        GetComponent<PolygonCollider2D>().offset = colliderObj.GetComponent<PolygonCollider2D>().offset;
-        GetComponent<PolygonCollider2D>().points = colliderObj.GetComponent<PolygonCollider2D>().points;
+        //SetCollider();
+    }
+
+    public void SetCollider()
+    {
+        cameraCollider = GameObject.FindGameObjectWithTag("CameraCollider");
+        GetComponent<PolygonCollider2D>().offset = cameraCollider.GetComponent<PolygonCollider2D>().offset;
+        GetComponent<PolygonCollider2D>().points = cameraCollider.GetComponent<PolygonCollider2D>().points;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

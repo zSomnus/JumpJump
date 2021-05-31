@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameDirector : MonoBehaviour
 {
+    [SerializeField] GameObject cameraCollider;
+
     string nextLevel;
     static int enemyCount;
 
@@ -14,13 +16,19 @@ public class GameDirector : MonoBehaviour
     {
         if (string.IsNullOrEmpty(nextLevel))
         {
-            LoadLevel("Map");
+            LoadLevel("Map1");
         }
     }
 
     public void LoadLevel(string levelName)
     {
         SceneManager.LoadScene(levelName, LoadSceneMode.Additive);
+    }
+
+    public void UnloadLevel(string levelName)
+    {
+        SceneManager.UnloadSceneAsync(levelName);
+
     }
 
     public void EnemyCountIncrease()
@@ -36,5 +44,12 @@ public class GameDirector : MonoBehaviour
         {
             enemyCount--;
         }
+    }
+
+    public void SetCameraCollider()
+    {
+        GameObject currentCollider = GameObject.FindGameObjectWithTag("CameraCollider");
+        cameraCollider.GetComponent<PolygonCollider2D>().offset = currentCollider.GetComponent<PolygonCollider2D>().offset;
+        cameraCollider.GetComponent<PolygonCollider2D>().points = currentCollider.GetComponent<PolygonCollider2D>().points;
     }
 }
