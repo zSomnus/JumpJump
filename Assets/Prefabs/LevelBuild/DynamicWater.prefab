@@ -131,6 +131,6 @@ MonoBehaviour:
   waterMaterial: {fileID: 2100000, guid: 1436ae9c9c3136340aafee6a27f0451f, type: 2}
   splash: {fileID: 0}
   sprigConstant: 0.01
-  damping: 0.1
+  damping: 0.05
   spread: 0.1
   collisionVelocityFactor: 0.04

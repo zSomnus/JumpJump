@@ -49,14 +49,17 @@ TagManager:
   - name: Mid
     uniqueID: 592715157
     locked: 0
-  - name: Foreground
-    uniqueID: 2009049405
-    locked: 0
   - name: AirEnemy
     uniqueID: 1612905481
     locked: 0
   - name: Player
     uniqueID: 49047995
+    locked: 0
+  - name: Water
+    uniqueID: 3468812723
+    locked: 0
+  - name: Foreground
+    uniqueID: 2009049405
     locked: 0
   - name: GroundEnemy
     uniqueID: 536444959

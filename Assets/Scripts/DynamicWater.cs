@@ -37,6 +37,7 @@ public class DynamicWater : MonoBehaviour
     float[] rightDeltas;
 
     float timer;
+    ObjectPool objectPool;
 
     void GenerateMesh()
     {
@@ -75,7 +76,7 @@ public class DynamicWater : MonoBehaviour
         }
 
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.sortingLayerName = "Mid";
+        meshRenderer.sortingLayerName = "Water";
 
         if (waterMaterial)
         {
@@ -103,6 +104,7 @@ public class DynamicWater : MonoBehaviour
 
     private void Start()
     {
+        objectPool = D.Get<ObjectPool>();
         InitializePhysics();
         GenerateMesh();
         SetBosCollider2D();
@@ -161,6 +163,18 @@ public class DynamicWater : MonoBehaviour
     {
         Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
         Splash(collision, rb.velocity.y * collisionVelocityFactor);
+        GameObject particle = objectPool.GetFromPool("SplashParticle");
+        particle.transform.position = collision.transform.position;
+        particle.SetActive(true);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
+        Splash(collision, rb.velocity.y * collisionVelocityFactor);
+        GameObject particle = objectPool.GetFromPool("SplashParticle");
+        particle.transform.position = collision.transform.position;
+        particle.SetActive(true);
     }
 
     private void Splash(Collider2D collision, float force)
