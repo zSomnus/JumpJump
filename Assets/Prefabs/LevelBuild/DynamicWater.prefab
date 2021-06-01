@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 704786713514069371}
   - component: {fileID: 704786713514069365}
   - component: {fileID: 704786713514069364}
+  - component: {fileID: 8685975987220854365}
   - component: {fileID: 704786713514069370}
   m_Layer: 4
   m_Name: DynamicWater
@@ -94,8 +95,8 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_IsTrigger: 1
+  m_UsedByEffector: 1
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
@@ -110,6 +111,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!253 &8685975987220854365
+BuoyancyEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 704786713514069369}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 2049
+  m_SurfaceLevel: 1
+  m_Density: 30
+  m_LinearDrag: 13
+  m_AngularDrag: 5
+  m_FlowAngle: 0
+  m_FlowMagnitude: 0
+  m_FlowVariation: 0
 --- !u!114 &704786713514069370
 MonoBehaviour:
   m_ObjectHideFlags: 0
