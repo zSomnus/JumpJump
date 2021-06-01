@@ -31,6 +31,7 @@ public class DynamicWater : MonoBehaviour
     [SerializeField] float damping = 0.1f;
     [SerializeField] float spread = 0.1f;
     [SerializeField] float collisionVelocityFactor = 0.04f;
+    [SerializeField] float updateRate;
 
     float[] velocities;
     float[] accelerations;
@@ -39,6 +40,7 @@ public class DynamicWater : MonoBehaviour
 
     float timer;
     ObjectPool objectPool;
+    bool isTimerEnd;
 
     void GenerateMesh()
     {
@@ -106,6 +108,7 @@ public class DynamicWater : MonoBehaviour
     private void Start()
     {
         objectPool = D.Get<ObjectPool>();
+        isTimerEnd = true;
         InitializePhysics();
         GenerateMesh();
         SetBosCollider2D();
@@ -127,7 +130,7 @@ public class DynamicWater : MonoBehaviour
 
     private void Update()
     {
-        if (timer <= 0)
+        if (timer <= 0 || !isTimerEnd)
         {
             return;
         }
@@ -158,6 +161,15 @@ public class DynamicWater : MonoBehaviour
         }
 
         mesh.vertices = vertices;
+
+        StartCoroutine(TimeCounter(updateRate));
+    }
+
+    IEnumerator TimeCounter(float time)
+    {
+        isTimerEnd = false;
+        yield return new WaitForSeconds(time);
+        isTimerEnd = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
