@@ -352,8 +352,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
-      minScalar: 0.1
+      scalar: 20
+      minScalar: 10
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -675,7 +675,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.35
+      scalar: 1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4819,4 +4819,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b3ab62075f46340bf799bbf1dd445f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 0.3
+  lifetime: 0.5

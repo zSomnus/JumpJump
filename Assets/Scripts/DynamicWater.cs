@@ -21,6 +21,7 @@ public class DynamicWater : MonoBehaviour
 
     [SerializeField] Material waterMaterial;
     [SerializeField] GameObject splash;
+    [SerializeField] float duration = 3f;
 
     Vector3[] vertices;
     Mesh mesh;
@@ -179,7 +180,7 @@ public class DynamicWater : MonoBehaviour
 
     private void Splash(Collider2D collision, float force)
     {
-        timer = 3f;
+        timer = duration;
         float radius = collision.bounds.max.x - collision.bounds.min.x;
         Vector2 center = new Vector2(collision.bounds.center.x, bound.top);
 

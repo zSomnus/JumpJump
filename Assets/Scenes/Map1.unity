@@ -242,11 +242,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!4 &355145525 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 704786713514069368, guid: 42bd420d2ff652f49a472a270b5775da, type: 3}
-  m_PrefabInstance: {fileID: 704786713695803981}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1000346061
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +436,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2009049405
-  m_SortingLayer: 3
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -7128,7 +7123,7 @@ Transform:
   - {fileID: 2091522708}
   - {fileID: 1121744735}
   - {fileID: 1790149527}
-  - {fileID: 355145525}
+  - {fileID: 2106544208}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -34877,7 +34872,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6516823701657798522, guid: 6b2dfc63108b509458bdf8d43539af83, type: 3}
   m_PrefabInstance: {fileID: 2091522707}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &704786713695803981
+--- !u!1001 &2106544207
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -34932,5 +34927,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DynamicWater
       objectReference: {fileID: 0}
+    - target: {fileID: 704786713514069370, guid: 42bd420d2ff652f49a472a270b5775da, type: 3}
+      propertyPath: waterMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 4ee028e76ad235f4ca550c7ba43fb9de, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42bd420d2ff652f49a472a270b5775da, type: 3}
+--- !u!4 &2106544208 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 704786713514069368, guid: 42bd420d2ff652f49a472a270b5775da, type: 3}
+  m_PrefabInstance: {fileID: 2106544207}
+  m_PrefabAsset: {fileID: 0}

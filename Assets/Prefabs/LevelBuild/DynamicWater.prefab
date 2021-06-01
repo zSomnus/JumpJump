@@ -127,10 +127,11 @@ MonoBehaviour:
     right: -12.7
     bottom: -3.1
     left: -61.39
-  quality: 40
-  waterMaterial: {fileID: 2100000, guid: 1436ae9c9c3136340aafee6a27f0451f, type: 2}
+  quality: 400
+  waterMaterial: {fileID: 2100000, guid: 4ee028e76ad235f4ca550c7ba43fb9de, type: 2}
   splash: {fileID: 0}
+  duration: 3
   sprigConstant: 0.01
   damping: 0.05
   spread: 0.1
-  collisionVelocityFactor: 0.04
+  collisionVelocityFactor: 0.01
