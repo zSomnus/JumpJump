@@ -58,6 +58,7 @@ public class Player : GroundActor
     bool isShadowStart;
     bool isDashPressed;
     bool canDash;
+    bool isInWater;
 
     [Header("Collision")]
     [SerializeField] private Vector2 rightOffset;
@@ -151,7 +152,7 @@ public class Player : GroundActor
 
     protected override void FlipSprite()
     {
-        if (state == STATE.Grounding)
+        if (state == STATE.Grounding || isInWater)
         {
             bool playerHasHorizontalSpeed = direction.x != 0;
 
@@ -484,5 +485,28 @@ public class Player : GroundActor
 
         Gizmos.DrawWireCube(new Vector3(transform.position.x + rightOffset.x, transform.position.y + rightOffset.y, transform.position.z), boxSizeWall);
         Gizmos.DrawWireCube(new Vector3(transform.position.x + leftOffset.x, transform.position.y + leftOffset.y, transform.position.z), boxSizeWall);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Water")
+        {
+            isInWater = true;
+
+            airJumpCount = 0;
+
+            if (!isDashPressed)
+            {
+                canDash = true;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Water")
+        {
+            isInWater = false;
+        }
     }
 }

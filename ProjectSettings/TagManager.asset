@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DBinder
   - CameraCollider
+  - Water
   layers:
   - Default
   - TransparentFX
