@@ -35,8 +35,8 @@ public class Actor : MonoBehaviour
 
     private void Awake()
     {
-        Init();
         OnAwake();
+        Init();
     }
 
     protected virtual void Init()

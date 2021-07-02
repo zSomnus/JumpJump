@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,16 +5,33 @@ public class GameDirector : MonoBehaviour
 {
     [SerializeField] GameObject cameraCollider;
 
+    LevelDatabase levelDatabase;
+
     string nextLevel;
     static int enemyCount;
 
     public int EnemyCount => enemyCount;
 
+    public static string debugInitialLevel = "";
+    public string CurrentLevel { get; private set; }
+    public LevelData CurrentLevelData { get; set; }
+    public static bool IsReady { get; set; }
+
     private void Awake()
     {
+        IsReady = true;
+
+        if (debugInitialLevel.Length > 0)
+        {
+            CurrentLevel = debugInitialLevel;
+        }
+
+        levelDatabase = D.Get<LevelDatabase>();
+        CurrentLevelData = levelDatabase.GetLevelData(CurrentLevel);
+
         if (string.IsNullOrEmpty(nextLevel))
         {
-            LoadLevel("Map1");
+            LoadLevel(CurrentLevel);
         }
     }
 

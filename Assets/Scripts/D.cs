@@ -11,7 +11,7 @@ public class D
     {
         string key = script.GetType().Name;
 
-        if(scripts.ContainsKey(key))
+        if (scripts.ContainsKey(key))
         {
             scripts[key] = script;
         }
@@ -33,6 +33,11 @@ public class D
 
     public static T Get<T>(bool canFail = false) where T : MonoBehaviour
     {
+        if (!GameDirector.IsReady)
+        {
+            return null;
+        }
+
         string key = typeof(T).Name;
 
         if (!scripts.ContainsKey(key))
@@ -40,7 +45,7 @@ public class D
             SearchForBinder();
         }
 
-        if(!scripts.ContainsKey(key) && !canFail)
+        if (!scripts.ContainsKey(key) && !canFail)
         {
             Debug.LogError($"D cannot find class {key}.");
         }

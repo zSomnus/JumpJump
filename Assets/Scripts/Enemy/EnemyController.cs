@@ -43,12 +43,23 @@ public class EnemyController : MonoBehaviour
 
         canShoot = true;
         canSlash = true;
-        player = D.Get<Player>();
-        playerTransform = player.transform;
         rb = GetComponent<Rigidbody2D>();
+
+        player = D.Get<Player>();
+
+        if (player != null)
+        {
+            playerTransform = player.transform;
+        }
+
         gameDirector = D.Get<GameDirector>();
-        gameDirector.EnemyCountIncrease();
-        owner.OnPostDeath += gameDirector.EnemyCountDecrease;
+
+        if (gameDirector != null)
+        {
+            gameDirector.EnemyCountIncrease();
+            owner.OnPostDeath += gameDirector.EnemyCountDecrease;
+        }
+
         animator = owner.Animator;
     }
 
@@ -114,13 +125,13 @@ public class EnemyController : MonoBehaviour
             else
             {
                 owner.isFacingMoveDirection = true;
-                rb.velocity = Vector2.zero;
+                rb.velocity = new Vector2(0, rb.velocity.y);
                 StartCoroutine(Slash());
             }
         }
-        else if (rb.velocity != Vector2.zero)
+        else if (rb.velocity.x != 0)
         {
-            rb.velocity = Vector2.zero;
+            rb.velocity = new Vector2(0, rb.velocity.y);
         }
     }
 
