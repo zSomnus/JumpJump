@@ -123,6 +123,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!60 &489575119 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 4343189068149564664, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
+  m_PrefabInstance: {fileID: 4343189067141231871}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4343189067141231871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -179,12 +184,20 @@ PrefabInstance:
       value: Map0
       objectReference: {fileID: 0}
     - target: {fileID: 4343189068265053225, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
+      propertyPath: bundingShape
+      value: 
+      objectReference: {fileID: 489575119}
+    - target: {fileID: 4343189068265053225, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
       propertyPath: playerStartPosition.x
       value: -14.5
       objectReference: {fileID: 0}
     - target: {fileID: 4343189068265053225, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
       propertyPath: playerStartPosition.y
       value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4343189068991752862, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
+      propertyPath: nextLevel
+      value: Map1
       objectReference: {fileID: 0}
     - target: {fileID: 7112475853380350018, guid: 9b84958d9c9f8f5418e04e365117eec1, type: 3}
       propertyPath: m_Material

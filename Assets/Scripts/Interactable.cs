@@ -13,6 +13,7 @@ public class Interactable : MonoBehaviour
     [SerializeField] InteractionID interactionID;
     [SerializeField] Vector2 interactionOffset = Vector2.zero;
     [SerializeField] GameObject iconGameObject;
+    [SerializeField] string nextLevel;
     public Action OnInteraction;
 
     // Temp value
@@ -41,8 +42,11 @@ public class Interactable : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             iconGameObject.SetActive(true);
-            gameDirector.UnloadLevel("Map0");
-            gameDirector.LoadLevel("Map1");
+
+            if (!string.IsNullOrEmpty(nextLevel))
+            {
+                gameDirector.LoadLevel(nextLevel);
+            }
         }
     }
 

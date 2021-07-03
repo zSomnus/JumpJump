@@ -12,6 +12,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] GameObject levelDoor;
     [SerializeField] string nextLevel;
     GameDirector gameDirector;
+    [SerializeField] PolygonCollider2D bundingShape;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,7 @@ public class LevelController : MonoBehaviour
         playerObject = player.gameObject;
         levelDoor.SetActive(false);
         gameDirector = D.Get<GameDirector>();
-        gameDirector.SetCameraCollider();
+        gameDirector.SetCameraCollider(bundingShape);
 
         if (playerObject != null)
         {

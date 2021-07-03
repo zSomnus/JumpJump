@@ -459,6 +459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraCollider: {fileID: 934007278}
+  cinemachineConfinder: {fileID: 295232461}
 --- !u!1 &512957427
 GameObject:
   m_ObjectHideFlags: 0
@@ -929,7 +930,6 @@ MonoBehaviour:
   - {fileID: 434597478}
   - {fileID: 85699420}
   - {fileID: 295232460}
-  - {fileID: 934007280}
   - {fileID: 479506224}
 --- !u!4 &854271988
 Transform:
@@ -985,7 +985,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 934007279}
-  - component: {fileID: 934007280}
   - component: {fileID: 934007282}
   m_Layer: 13
   m_Name: CameraCollider
@@ -1008,18 +1007,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &934007280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 934007278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c210bd6fa03967c4bb3055b7c64cdc8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!60 &934007282
 PolygonCollider2D:
   m_ObjectHideFlags: 0
