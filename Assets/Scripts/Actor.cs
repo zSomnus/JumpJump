@@ -14,6 +14,7 @@ public class Actor : MonoBehaviour
     int currentHp;
     [SerializeField] float moveSpeed;
     public bool isFacingMoveDirection = true;
+    [SerializeField] protected Transform[] weaponTransforms;
     [SerializeField] protected SpriteRenderer mainRenderer;
     [SerializeField] protected Material mainMaterial;
     [SerializeField] private Animator animator;
@@ -22,11 +23,42 @@ public class Actor : MonoBehaviour
     [SerializeField] protected bool canTakeSpikeDamage = true;
     [SerializeField] AudioClip hitAudio;
     [SerializeField] AudioClip deathAudio;
+    [SerializeField] bool isHeavy;
+
+    bool isDying;
+    public EnemyController Enemy { get; set; }
+    public bool IsEnemy => Enemy != null;
+
+    public float MoveSpeed { get => GetMoveSpeed(); set => moveSpeed = value; }
+    float shieldBlockTime;
+    public bool IsFacingRight { get; private set; } = true;
+
+    public float ShieldBlockTime
+    {
+        get => shieldBlockTime;
+        set
+        {
+            shieldBlockTime = Mathf.Max(shieldBlockTime, value);
+        }
+    }
+
+    public bool CountAsLevelEnemy => Enemy != null && Enemy.CountAsLevelEnemy;
+
+    public bool IsHeavy
+    {
+        get => isHeavy;
+        set => isHeavy = value;
+    }
+
+    public bool IsAlive() => GetCurrentHp() > 0;
 
     public Animator Animator { get => animator; set => animator = value; }
     public Vector2 CenterOffset { get => centerOffset; set => centerOffset = value; }
 
     public event Action<Actor> OnPostDeath = delegate { };
+    public static Action<Actor> RaiseActorDamagedEvent = delegate { };
+    public Action<Actor, int, DamageType, MeleeProperty> OnPostDamage = delegate { };
+    public bool IsInvincible { get; set; }
 
     protected virtual void OnEnable()
     {
@@ -88,6 +120,13 @@ public class Actor : MonoBehaviour
         }
     }
 
+    internal virtual bool CanMoveForwardGrounded(int direction)
+    {
+        return false;
+    }
+
+    public virtual void DropThroughPlatform() { }
+
     public virtual Vector2 GetFacingDirection()
     {
         return new Vector2(transform.localScale.x, 0);
@@ -136,6 +175,11 @@ public class Actor : MonoBehaviour
         UpdateHp();
     }
 
+    protected virtual Vector2 GetInputMove()
+    {
+        return Vector2.zero;
+    }
+
     public virtual int OnDamage(int damage)
     {
         // Prepare and play hit audio
@@ -154,6 +198,51 @@ public class Actor : MonoBehaviour
         return damage;
     }
 
+    public virtual int OnDamage(int damage, DamageType damageType, Actor damager, MeleeProperty meleeProperty = MeleeProperty.None)
+    {
+        Debug.Log($"{gameObject.name} got hit for {damage} dmg.");
+        bool isNotSuicide = (damageType == DamageType.Dot || damager != this);
+
+        if (IsInvincible)
+        {
+            return 0;
+        }
+        else if (ShieldBlockTime > 0)
+        {
+            bool blockFacing = !IsFacingRight;
+            Vector3 blockPos = GetWeaponTransform().position;
+            if (damager != null)
+            {
+                blockFacing = transform.position.x > damager.transform.position.x;
+                if (blockFacing == IsFacingRight)
+                {
+                    blockPos = transform.position;
+                }
+            }
+
+            return 0;
+        }
+
+        RaiseActorDamagedEvent(this);
+        if (isDying)
+        {
+            return damage;
+        }
+
+        currentHp -= OnPreDamageApplication(damage);
+        OnPostDamageApplication();
+        UpdateHp();
+
+        if (currentHp <= 0)
+        {
+            isDying = true;
+            OnDeath();
+        }
+
+        OnPostDamage(this, damage, damageType, meleeProperty);
+        return damage;
+    }
+
     public virtual int OnHpCost(int cost)
     {
         currentHp -= OnPreDamageApplication(cost);
@@ -166,6 +255,8 @@ public class Actor : MonoBehaviour
         return cost;
     }
 
+    protected virtual void OnPostDamageApplication() { }
+
     protected virtual int OnPreDamageApplication(int damage)
     {
         return damage;
@@ -175,8 +266,6 @@ public class Actor : MonoBehaviour
     {
         return moveSpeed;
     }
-
-    public bool IsAlive() => GetCurrentHp() > 0;
 
     public virtual void OnDeath()
     {
@@ -202,6 +291,16 @@ public class Actor : MonoBehaviour
         mainMaterial.SetFloat("_FlashAmount", 1);
         yield return new WaitForSeconds(0.1f);
         mainMaterial.SetFloat("_FlashAmount", 0);
+    }
+
+    public virtual void Juggle()
+    {
+        // Play juggle sound effect;
+    }
+
+    public Transform GetWeaponTransform()
+    {
+        return weaponTransforms.Length > 0 ? weaponTransforms[0] : null;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

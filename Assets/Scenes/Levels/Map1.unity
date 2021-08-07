@@ -134,6 +134,14 @@ PrefabInstance:
       propertyPath: bundingShape
       value: 
       objectReference: {fileID: 5001278026257807877}
+    - target: {fileID: 4996244709134780948, guid: be6e9eecc1d76e04ea9c29d852de235a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 4996244709134780948, guid: be6e9eecc1d76e04ea9c29d852de235a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 33.46
+      objectReference: {fileID: 0}
     - target: {fileID: 5001278025363450352, guid: be6e9eecc1d76e04ea9c29d852de235a, type: 3}
       propertyPath: m_RootOrder
       value: 0
