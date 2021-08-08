@@ -75,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 536444959
-  m_SortingLayer: 6
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: 4723107735738678597, guid: c1cdd26cc09ad224884556bc4d8296ae, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -166,14 +166,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57946855c22fca45bf8e737ec90b439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyName: Goblin
   damage: 20
   isRanged: 0
   isMelee: 1
   centerOffset: {x: 0, y: -0.24, z: 0}
   aggroRange: 5
   attackRange: 1.5
+  safeHeight: 0
+  enemyRank: 0
+  attackForwardPush: 0
+  AttackCooldownTime: 0
+  attackChargeTime: 0
+  attackInfos: []
   attackCD: 1
   bulletSpeed: 0
+  collider2Ds: []
   animator: {fileID: 0}
 --- !u!114 &2564695524173808809
 MonoBehaviour:
@@ -190,6 +198,7 @@ MonoBehaviour:
   baseHp: 4
   moveSpeed: 5
   isFacingMoveDirection: 1
+  weaponTransforms: []
   mainRenderer: {fileID: 6841685164739941448}
   mainMaterial: {fileID: 0}
   animator: {fileID: 6841685164739941450}
@@ -198,6 +207,7 @@ MonoBehaviour:
   canTakeSpikeDamage: 1
   hitAudio: {fileID: 8300000, guid: 467d23a920246ed4b8ea44ae0e637047, type: 3}
   deathAudio: {fileID: 8300000, guid: 40ff7ba5e4fb2c0458b18704819fa71e, type: 3}
+  isHeavy: 0
   jumpSpeed: 12
   minJumpSpeed: 10
   maxFallSpeed: 15
@@ -209,3 +219,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   landingAudio: {fileID: 0}
+  isStartingAggroed: 0
+  isPatrolling: 1
+  canChasePlayerOffLand: 1

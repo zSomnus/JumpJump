@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,37 @@ public class GroundActor : Actor
     [SerializeField] protected LayerMask groundLayer;
     [SerializeField] protected AudioClip landingAudio;
 
+    [SerializeField] BoxCollider2D feetCollider;
+    protected BoxCollider2D boxCollider2D;
+    Player playerCache;
+
+    public bool IsGravityOn
+    {
+        get => controller2D.IsGravityOn;
+        set => controller2D.IsGravityOn = value;
+    }
+
+    protected override void OnAwake()
+    {
+        base.OnAwake();
+
+        if (feetCollider != null)
+        {
+            boxCollider2D = feetCollider;
+        }
+        else
+        {
+            boxCollider2D = GetComponent<BoxCollider2D>();
+        }
+        controller2D = CreateController2D();
+        controller2D.Init(boxCollider2D, this);
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        playerCache = D.Get<Player>();
+    }
 
     protected override void OnEnable()
     {
@@ -23,6 +55,8 @@ public class GroundActor : Actor
     protected override void Update()
     {
         base.Update();
+
+        controller2D.Update();
     }
 
     protected override void FixedUpdate()
@@ -65,6 +99,16 @@ public class GroundActor : Actor
     protected virtual bool IsOnGround()
     {
         return Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, boxSizeGround, 0f, groundLayer);
+    }
+
+    public override bool IsGrounded()
+    {
+        return controller2D?.IsGrounded() ?? false;
+    }
+
+    public bool IsFalling()
+    {
+        return controller2D?.IsFalling() ?? false;
     }
 
     protected virtual void OnDrawGizmosSelected()

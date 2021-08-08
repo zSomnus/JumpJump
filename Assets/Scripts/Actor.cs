@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Actor : MonoBehaviour
 {
+    [FormerlySerializedAs("spriteObject")] [SerializeField] protected GameObject spriteContainer;
     protected ObjectPool objectPool;
     protected Rigidbody2D rb;
     protected Collider2D baseCollider;
@@ -18,12 +20,14 @@ public class Actor : MonoBehaviour
     [SerializeField] protected SpriteRenderer mainRenderer;
     [SerializeField] protected Material mainMaterial;
     [SerializeField] private Animator animator;
+    const float AnimatorSpeedWhenTimePaused = 0;
     [SerializeField] Vector2 centerOffset;
     [SerializeField] CameraEffect mainCameraEffect;
     [SerializeField] protected bool canTakeSpikeDamage = true;
     [SerializeField] AudioClip hitAudio;
     [SerializeField] AudioClip deathAudio;
     [SerializeField] bool isHeavy;
+    protected Controller2D controller2D;
 
     bool isDying;
     public EnemyController Enemy { get; set; }
@@ -59,6 +63,37 @@ public class Actor : MonoBehaviour
     public static Action<Actor> RaiseActorDamagedEvent = delegate { };
     public Action<Actor, int, DamageType, MeleeProperty> OnPostDamage = delegate { };
     public bool IsInvincible { get; set; }
+    private int timeScalePercent = 100;
+    public int TimeScalePercent
+    {
+        get
+        {
+            return timeScalePercent;
+        }
+        set
+        {
+            timeScalePercent = value;
+            UpdateAnimatorSpeed();
+        }
+    }
+
+    public float MyDeltaTime
+    {
+        get
+        {
+
+            return (TimeScalePercent / 100f) * GameTime.deltaTime;
+        }
+    }
+
+    private void UpdateAnimatorSpeed()
+    {
+        if (animator != null)
+        {
+            animator.speed = GameTime.IsGamePaused ? AnimatorSpeedWhenTimePaused : (timeScalePercent / 100f) * GameTime.GetSlowValue();
+            animator.enabled = timeScalePercent > 0;
+        }
+    }
 
     protected virtual void OnEnable()
     {
@@ -105,6 +140,11 @@ public class Actor : MonoBehaviour
         }
 
         FlipSprite();
+    }
+
+    internal void EndJuggle()
+    {
+        spriteContainer.transform.localEulerAngles = Vector3.zero;
     }
 
     protected virtual void FlipSprite()
@@ -241,6 +281,16 @@ public class Actor : MonoBehaviour
 
         OnPostDamage(this, damage, damageType, meleeProperty);
         return damage;
+    }
+
+    public virtual bool IsGrounded()
+    {
+        return true;
+    }
+
+    protected virtual Controller2D CreateController2D()
+    {
+        return new Controller2D();
     }
 
     public virtual int OnHpCost(int cost)

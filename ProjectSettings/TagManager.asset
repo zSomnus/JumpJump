@@ -23,10 +23,10 @@ TagManager:
   - Spike
   - CameraCollider
   - Interactable
-  - 
-  - 
-  - 
-  - 
+  - Obstacle
+  - Platform
+  - MonsterGrid
+  - Player
   - 
   - 
   - 

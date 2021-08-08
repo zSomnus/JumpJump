@@ -94,6 +94,7 @@ public class EnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         player = D.Get<Player>();
+        StateMachine = new EnemyStateMachine(this, player);
 
         if (player != null)
         {
