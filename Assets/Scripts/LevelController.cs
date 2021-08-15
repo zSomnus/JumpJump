@@ -18,9 +18,13 @@ public class LevelController : MonoBehaviour
     {
         player = D.Get<Player>();
         playerObject = player.gameObject;
-        levelDoor.SetActive(false);
         gameDirector = D.Get<GameDirector>();
         gameDirector.SetCameraCollider(bundingShape);
+
+        //if (levelDoor != null)
+        //{
+        //    levelDoor.SetActive(false);
+        //}
 
         if (playerObject != null)
         {
@@ -36,10 +40,10 @@ public class LevelController : MonoBehaviour
             StartCoroutine(ResetPlayer());
         }
 
-        if (gameDirector.EnemyCount <= 0 && levelDoor.activeInHierarchy == false)
-        {
-            levelDoor.SetActive(true);
-        }
+        //if (gameDirector.EnemyCount <= 0 && levelDoor.activeInHierarchy == false)
+        //{
+        //    levelDoor.SetActive(true);
+        //}
     }
 
     private void OnDrawGizmosSelected()
